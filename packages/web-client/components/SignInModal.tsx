@@ -13,7 +13,6 @@ import {
   ModalBody,
   ModalCloseButton,
   ModalContent,
-  ModalFooter,
   ModalHeader,
   ModalOverlay,
 } from '@chakra-ui/react';
@@ -69,11 +68,19 @@ export const SignInModal: React.FC<Props> = ({ isOpen, onClose }) => {
     }
   );
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Welcome Back</ModalHeader>
-        <ModalCloseButton />
+      <ModalContent
+        bgColor="black"
+        border="1px"
+        borderTop="8px"
+        borderRight="8px"
+        borderColor="white"
+        borderRadius="2em"
+        p="8"
+      >
+        <ModalHeader textColor="white">Welcome Back</ModalHeader>
+        <ModalCloseButton color="white" />
         <ModalBody>
           <form onSubmit={onSubmit}>
             <FormControl id="email" isInvalid={Boolean(errors.email)}>
@@ -153,12 +160,12 @@ export const SignInModal: React.FC<Props> = ({ isOpen, onClose }) => {
           </form>
         </ModalBody>
 
-        <ModalFooter>
+        {/* <ModalFooter>
           <Button colorScheme="blue" mr={3} onClick={onClose}>
             Close
           </Button>
           <Button variant="ghost">Secondary Action</Button>
-        </ModalFooter>
+        </ModalFooter> */}
       </ModalContent>
     </Modal>
   );
