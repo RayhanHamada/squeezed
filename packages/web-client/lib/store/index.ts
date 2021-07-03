@@ -6,10 +6,22 @@ export const useModalData = createStore(
     combine(
       {
         signInOnOpen: () => {},
+        signUpOnOpen: () => {},
+        isSignInOpen: false,
+        isSignUpOpen: false,
       },
-      (set, get) => ({
+      (set) => ({
         setSignInOnOpen: (signInOnOpen: () => void) =>
           set(() => ({ signInOnOpen })),
+
+        setSignUpOnOpen: (signUpOnOpen: () => void) =>
+          set(() => ({ signUpOnOpen })),
+
+        toggleSignUp: () =>
+          set(({ isSignUpOpen }) => ({ isSignUpOpen: !isSignUpOpen })),
+
+        toggleSignIn: () =>
+          set(({ isSignInOpen }) => ({ isSignInOpen: !isSignInOpen })),
       })
     ),
     { name: 'modal-store', getStorage: () => sessionStorage }

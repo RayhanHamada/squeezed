@@ -1,5 +1,6 @@
 import { Navbar } from '@/components/Navbar';
 import { SignInModal } from '@/components/SignInModal';
+import { SignUpModal } from '@/components/SignUpModal';
 import { useModalData } from '@/lib/store';
 import { Container, useDisclosure } from '@chakra-ui/react';
 import Head from 'next/head';
@@ -9,13 +10,30 @@ export default function Home() {
   /**
    * sign in modal disclosure
    */
-  const { isOpen, onClose, onOpen } = useDisclosure();
+  const {
+    isOpen: isSignInOpen,
+    onClose: onSignInClose,
+    onOpen: onSignInOpen,
+  } = useDisclosure();
 
-  const { setSignInOnOpen } = useModalData();
+  /**
+   * sign up modal disclosure
+   */
+  const {
+    isOpen: isSignUpOpen,
+    onClose: onSignUpClose,
+    onOpen: onSignUpOpen,
+  } = useDisclosure();
 
+  const { setSignInOnOpen, setSignUpOnOpen } = useModalData();
+
+  /**
+   * register callback ke state zustand
+   */
   useEffect(() => {
-    setSignInOnOpen(onOpen);
-  }, [setSignInOnOpen, onOpen]);
+    setSignInOnOpen(onSignInOpen);
+    setSignUpOnOpen(onSignUpOpen);
+  }, [setSignInOnOpen, setSignUpOnOpen, onSignInOpen, onSignUpOpen]);
 
   return (
     <Container maxW="full" h="100vh" p="0" marginX="0" bgColor="black">
@@ -25,7 +43,8 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Navbar />
-      <SignInModal isOpen={isOpen} onClose={onClose} />
+      <SignInModal isOpen={isSignInOpen} onClose={onSignInClose} />
+      <SignUpModal isOpen={isSignUpOpen} onClose={onSignUpClose} />
     </Container>
   );
 }

@@ -7,14 +7,14 @@ import React from 'react';
 // };
 
 export const SignInButton: React.FC = () => {
-  const { signInOnOpen } = useModalData();
+  const onOpen = useModalData((sel) => sel.signInOnOpen);
   return (
     <Button
       variant="outline"
       ringColor="white"
       size="sm"
       _hover={{ opacity: 0.7 }}
-      onClick={signInOnOpen}
+      onClick={onOpen}
     >
       <Text color="white" cursor="pointer">
         Sign In
