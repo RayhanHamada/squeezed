@@ -1,4 +1,4 @@
-import { Center, Flex, Spacer } from '@chakra-ui/react';
+import { Box, Center, Flex, Spacer, Text } from '@chakra-ui/react';
 import React from 'react';
 import { SignInButton } from './SignInButton';
 import { SignUpButton } from './SignUpButton';
@@ -17,7 +17,13 @@ export const Navbar: React.FC = (_props) => {
       zIndex="10"
     >
       <Center>
-        <SqueezedLogo fontSize="2xl" />
+        <Flex alignItems="flex-end">
+          <SqueezedLogo fontSize="2xl" />
+          <Box w="2" />
+          <Text textColor="white" fontSize="x-small">
+            Shorten your URL within a second !
+          </Text>
+        </Flex>
       </Center>
       <Spacer />
       <Center>
