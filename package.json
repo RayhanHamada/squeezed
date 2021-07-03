@@ -1,0 +1,15 @@
+{
+  "name": "root",
+  "private": true,
+  "repository": {
+    "url": ""
+  },
+  "author": "Rayhan Hamada <rayhanhamada1999@gmail.com>",
+  "description": "Squeezed the URL shortener",
+  "license": "ISC",
+  "devDependencies": {
+    "lerna": "^4.0.0",
+    "prettier": "^2.3.2",
+    "typescript": "^4.3.5"
+  }
+}
