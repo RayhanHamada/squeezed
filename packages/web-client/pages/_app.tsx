@@ -1,7 +1,7 @@
-import { client } from '@/lib/supabase';
-import { ChakraProvider } from '@chakra-ui/react';
-import type { AppProps } from 'next/app';
-import { Provider } from 'react-supabase';
+import { client } from "@/lib/supabase";
+import { ChakraProvider } from "@chakra-ui/react";
+import type { AppProps } from "next/app";
+import { Provider } from "react-supabase";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
