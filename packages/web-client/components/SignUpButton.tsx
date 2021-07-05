@@ -2,7 +2,7 @@ import { useModalData } from '@/lib/store';
 import { Button, Text } from '@chakra-ui/react';
 import React from 'react';
 
-export const SignUpButton: React.FC = (_props) => {
+export const SignUpButton: React.FC = () => {
   const onOpen = useModalData((sel) => sel.signUpOnOpen);
   return (
     <Button
