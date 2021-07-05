@@ -13,8 +13,6 @@ export const Navbar: React.FC = (_props) => {
       borderBottom="1px"
       borderColor="white"
       paddingX="8"
-      position="fixed"
-      zIndex="10"
     >
       <Center>
         <Flex alignItems="flex-end">

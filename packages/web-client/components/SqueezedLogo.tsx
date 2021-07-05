@@ -1,4 +1,4 @@
-import { Box, Text, TypographyProps } from '@chakra-ui/react';
+import { Text, TypographyProps } from '@chakra-ui/react';
 import { useRouter } from 'next/dist/client/router';
 import React, { MouseEventHandler } from 'react';
 
@@ -15,16 +15,14 @@ export const SqueezedLogo: React.FC<Props> = ({ fontSize }) => {
   };
 
   return (
-    <Box>
-      <Text
-        fontSize={fontSize}
-        fontWeight="bold"
-        color="white"
-        _hover={{ cursor: 'pointer' }}
-        onClick={refresh}
-      >
-        Squeezed
-      </Text>
-    </Box>
+    <Text
+      fontSize={fontSize}
+      fontWeight="bold"
+      color="white"
+      _hover={{ cursor: 'pointer' }}
+      onClick={refresh}
+    >
+      Squeezed
+    </Text>
   );
 };
