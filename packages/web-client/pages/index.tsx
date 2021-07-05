@@ -1,6 +1,7 @@
 import { Navbar } from '@/components/Navbar';
 import { SignInModal } from '@/components/SignInModal';
 import { SignUpModal } from '@/components/SignUpModal';
+import { TryItDrawer } from '@/components/TryItDrawer';
 import { useModalData } from '@/lib/store';
 import {
   Button,
@@ -28,14 +29,14 @@ const whyReasons = [
     Icon: AiOutlineLock,
   },
   {
-    reason: "We won't show you dozens of boring ads and keep you waiting.",
+    reason: "We won't keeps you waiting by watching ads",
     Icon: AiOutlineDashboard,
   },
 ];
 
 export default function Home() {
   /**
-   * sign in modal disclosure
+   * for sign in modal
    */
   const {
     isOpen: isSignInOpen,
@@ -44,12 +45,21 @@ export default function Home() {
   } = useDisclosure();
 
   /**
-   * sign up modal disclosure
+   * for sign up modal
    */
   const {
     isOpen: isSignUpOpen,
     onClose: onSignUpClose,
     onOpen: onSignUpOpen,
+  } = useDisclosure();
+
+  /**
+   * for try it drawer
+   */
+  const {
+    isOpen: isDrawerOpen,
+    onClose: onDrawerClose,
+    onOpen: onDrawerOpen,
   } = useDisclosure();
 
   const { setSignInOnOpen, setSignUpOnOpen } = useModalData();
@@ -82,6 +92,9 @@ export default function Home() {
       <SignInModal isOpen={isSignInOpen} onClose={onSignInClose} />
       <SignUpModal isOpen={isSignUpOpen} onClose={onSignUpClose} />
 
+      {/* drawer try it */}
+      <TryItDrawer isOpen={isDrawerOpen} onClose={onDrawerClose} />
+
       {/* landing page body */}
 
       <Text textAlign="center" fontSize="4xl" color="white" mt="40">
@@ -92,7 +105,12 @@ export default function Home() {
         to share links.
       </Text>
       <Center paddingTop="8">
-        <Button alignSelf="center" size="lg" _hover={{ opacity: 0.7 }}>
+        <Button
+          alignSelf="center"
+          size="lg"
+          _hover={{ opacity: 0.7 }}
+          onClick={onDrawerOpen}
+        >
           Try Free Now
         </Button>
       </Center>
@@ -117,6 +135,7 @@ export default function Home() {
             alignItems="center"
           >
             <Icon color="white" size="4em" />
+
             <Text
               textAlign="center"
               paddingTop="8"
