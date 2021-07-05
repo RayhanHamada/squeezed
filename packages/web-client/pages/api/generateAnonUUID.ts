@@ -1,0 +1,40 @@
+import { dayjs } from '@/lib/dayjs';
+import { URLData } from '@/lib/entities';
+import { admin } from '@/lib/firebase-admin';
+import type { NextApiRequest, NextApiResponse } from 'next';
+import short from 'short-uuid';
+
+type Data = {
+  errorMsg?: string;
+  uuidCode?: string;
+};
+
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse<Data>
+) {
+  const realURL = req.body.url as string;
+  const generated: string = short.generate();
+  const now = dayjs.utc().unix();
+
+  await admin
+    .firestore()
+    .collection('url_data')
+    .add({
+      enabled: true,
+      ref_url: realURL,
+      uuid_code: generated,
+      created_at: now,
+      last_modified_at: now,
+    } as URLData)
+    .then(() => {
+      res.status(200).json({
+        uuidCode: generated,
+      });
+    })
+    .catch(() => {
+      res.status(500).json({
+        errorMsg: 'failed to create url data',
+      });
+    });
+}

@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   Drawer,
   DrawerBody,
   DrawerCloseButton,
@@ -8,15 +9,11 @@ import {
   DrawerOverlay,
   Flex,
   FormLabel,
-  Input,
-  InputGroup,
-  InputLeftAddon,
-  InputRightAddon,
-  Select,
   Stack,
+  Text,
   Textarea,
 } from '@chakra-ui/react';
-import React, { createRef, useState } from 'react';
+import React, { createRef, MouseEventHandler, useState } from 'react';
 
 type Props = {
   onClose: () => void;
@@ -27,6 +24,10 @@ export const TryItDrawer: React.FC<Props> = ({ isOpen, onClose }) => {
   const firstField = createRef<HTMLInputElement>();
 
   const [rawLink, setRawLink] = useState('');
+  const [isDrawerExpanded, setDrawerExpanded] = useState(false);
+  const [fetchState, setFetchState] = useState<
+    'nofetch' | 'fetching' | 'fetched'
+  >('nofetch');
 
   const onTextBoxChange: React.ChangeEventHandler<HTMLTextAreaElement> = (
     e
@@ -35,17 +36,26 @@ export const TryItDrawer: React.FC<Props> = ({ isOpen, onClose }) => {
     setRawLink(e.target.textContent?.trim() ?? '');
   };
 
+  const toggleExpand: MouseEventHandler<HTMLButtonElement> = (e) => {
+    e.preventDefault();
+    setDrawerExpanded(() => !isDrawerExpanded);
+  };
+
+  const fetchShortenedURL = async () => {
+    setFetchState('fetching');
+  };
+
   return (
     <Drawer
       isOpen={isOpen}
       onClose={onClose}
-      size="xs"
+      size={isDrawerExpanded ? 'lg' : 'xs'}
       initialFocusRef={firstField}
     >
       <DrawerOverlay />
       <DrawerContent>
         <DrawerCloseButton border="1px" />
-        <DrawerHeader borderBottomWidth="1px">
+        <DrawerHeader borderBottomWidth="1px" borderBottomColor="black">
           Try it <b>Free</b>
         </DrawerHeader>
 
@@ -53,37 +63,40 @@ export const TryItDrawer: React.FC<Props> = ({ isOpen, onClose }) => {
           <Flex flexDir="column" alignItems="stretch" justifyContent="center">
             <Stack spacing="24px">
               <Box>
-                <FormLabel htmlFor="username">
-                  Paste your loooooong links here
-                </FormLabel>
-                <Textarea onChange={onTextBoxChange} />
+                <FormLabel htmlFor="username"></FormLabel>
+                <Textarea
+                  placeholder="Paste Your Loooooooooooong link here"
+                  h="32"
+                  onChange={onTextBoxChange}
+                  border="1px"
+                  borderColor="black"
+                />
               </Box>
 
-              <Box>
-                <FormLabel htmlFor="url">Url</FormLabel>
-                <InputGroup>
-                  <InputLeftAddon>http://</InputLeftAddon>
-                  <Input
-                    type="url"
-                    id="url"
-                    placeholder="Please enter domain"
-                  />
-                  <InputRightAddon>.com</InputRightAddon>
-                </InputGroup>
-              </Box>
-
-              <Box>
-                <FormLabel htmlFor="owner">Select Owner</FormLabel>
-                <Select id="owner" defaultValue="segun">
-                  <option value="segun">Segun Adebayo</option>
-                  <option value="kola">Kola Tioluwani</option>
-                </Select>
-              </Box>
-
-              <Box>
-                <FormLabel htmlFor="desc">Description</FormLabel>
-                <Textarea id="desc" />
-              </Box>
+              <Flex>
+                <Button
+                  size="xs"
+                  onClick={toggleExpand}
+                  variant="outline"
+                  borderTop="4px"
+                  borderRight="4px"
+                  borderColor="black"
+                >
+                  {isDrawerExpanded ? 'Too big...' : 'More room please...'}
+                </Button>
+              </Flex>
+              <Button
+                size="md"
+                variant="outline"
+                border="2px"
+                borderColor="black"
+                onClick={fetchShortenedURL}
+                borderTop="8px"
+                borderRight="8px"
+              >
+                Generate !
+              </Button>
+              <Text>Your Shortened URL is:</Text>
             </Stack>
           </Flex>
         </DrawerBody>

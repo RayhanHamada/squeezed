@@ -82,7 +82,7 @@ export default function Home() {
       bgColor="black"
     >
       <Head>
-        <title>Squeezed: Shorten your link with Squeezed</title>
+        <title>Squeezed</title>
         <meta name="description" content="Shorten your link with Squeezed" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
