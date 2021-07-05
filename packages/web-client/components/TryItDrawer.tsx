@@ -1,6 +1,8 @@
+import { useTryItStore } from '@/lib/store';
 import {
   Box,
   Button,
+  Center,
   Drawer,
   DrawerBody,
   DrawerCloseButton,
@@ -8,12 +10,16 @@ import {
   DrawerHeader,
   DrawerOverlay,
   Flex,
-  FormLabel,
+  IconButton,
+  Spacer,
+  Spinner,
   Stack,
   Text,
   Textarea,
+  useToast,
 } from '@chakra-ui/react';
-import React, { createRef, MouseEventHandler, useState } from 'react';
+import React, { createRef } from 'react';
+import { FaClipboard } from 'react-icons/fa';
 
 type Props = {
   onClose: () => void;
@@ -23,33 +29,36 @@ type Props = {
 export const TryItDrawer: React.FC<Props> = ({ isOpen, onClose }) => {
   const firstField = createRef<HTMLInputElement>();
 
-  const [rawLink, setRawLink] = useState('');
-  const [isDrawerExpanded, setDrawerExpanded] = useState(false);
-  const [fetchState, setFetchState] = useState<
-    'nofetch' | 'fetching' | 'fetched'
-  >('nofetch');
+  const toast = useToast({
+    description: 'Text Copied',
+    title: 'Copied !',
+    status: 'info',
+    duration: 2000,
+    position: 'bottom',
+  });
 
-  const onTextBoxChange: React.ChangeEventHandler<HTMLTextAreaElement> = (
-    e
-  ) => {
-    e.preventDefault();
-    setRawLink(e.target.textContent?.trim() ?? '');
-  };
+  const {
+    fetchAnonURL,
+    isError,
+    isFetching,
+    shortenedURL,
+    onTextBoxChange,
+    toggleExpanded,
+    refURL,
+    expanded,
+    isRefURLValid,
+  } = useTryItStore();
 
-  const toggleExpand: MouseEventHandler<HTMLButtonElement> = (e) => {
-    e.preventDefault();
-    setDrawerExpanded(() => !isDrawerExpanded);
-  };
-
-  const fetchShortenedURL = async () => {
-    setFetchState('fetching');
+  const copy = () => {
+    navigator.clipboard.writeText(refURL);
+    toast();
   };
 
   return (
     <Drawer
       isOpen={isOpen}
       onClose={onClose}
-      size={isDrawerExpanded ? 'lg' : 'xs'}
+      size={expanded ? 'lg' : 'xs'}
       initialFocusRef={firstField}
     >
       <DrawerOverlay />
@@ -63,7 +72,6 @@ export const TryItDrawer: React.FC<Props> = ({ isOpen, onClose }) => {
           <Flex flexDir="column" alignItems="stretch" justifyContent="center">
             <Stack spacing="24px">
               <Box>
-                <FormLabel htmlFor="username"></FormLabel>
                 <Textarea
                   placeholder="Paste Your Loooooooooooong link here"
                   h="32"
@@ -71,18 +79,21 @@ export const TryItDrawer: React.FC<Props> = ({ isOpen, onClose }) => {
                   border="1px"
                   borderColor="black"
                 />
+                <Text textColor="red" fontSize="sm">
+                  {isRefURLValid ? '' : 'URL seems to be invalid'}
+                </Text>
               </Box>
 
               <Flex>
                 <Button
                   size="xs"
-                  onClick={toggleExpand}
+                  onClick={toggleExpanded}
                   variant="outline"
                   borderTop="4px"
                   borderRight="4px"
                   borderColor="black"
                 >
-                  {isDrawerExpanded ? 'Too big...' : 'More room please...'}
+                  {expanded ? 'Too big...' : 'More room please...'}
                 </Button>
               </Flex>
               <Button
@@ -90,13 +101,42 @@ export const TryItDrawer: React.FC<Props> = ({ isOpen, onClose }) => {
                 variant="outline"
                 border="2px"
                 borderColor="black"
-                onClick={fetchShortenedURL}
+                onClick={fetchAnonURL}
                 borderTop="8px"
                 borderRight="8px"
+                isDisabled={!isRefURLValid}
               >
                 Generate !
               </Button>
-              <Text>Your Shortened URL is:</Text>
+              <Text>Your Shortened URL is: </Text>
+              {isFetching ? (
+                <Center>
+                  <Spinner />
+                </Center>
+              ) : undefined}
+              {isError ? (
+                <Text textColor="red">Failed fetching data for your url</Text>
+              ) : undefined}
+
+              {shortenedURL !== '' ? (
+                <Flex justifyContent="space-between">
+                  <Text onClick={copy} textColor="blue">
+                    {shortenedURL}
+                  </Text>
+                  <Spacer />
+                  <IconButton
+                    size="xs"
+                    aria-label="copy"
+                    icon={<FaClipboard />}
+                    onClick={copy}
+                  ></IconButton>
+                </Flex>
+              ) : undefined}
+              {shortenedURL !== '' ? (
+                <Text>
+                  URL only last for the next 24 hour. Sign In to save your URL
+                </Text>
+              ) : undefined}
             </Stack>
           </Flex>
         </DrawerBody>

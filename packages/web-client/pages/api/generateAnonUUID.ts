@@ -5,8 +5,8 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import short from 'short-uuid';
 
 type Data = {
-  errorMsg?: string;
-  uuidCode?: string;
+  error_msg?: string;
+  uuid_code?: string;
 };
 
 export default async function handler(
@@ -29,12 +29,12 @@ export default async function handler(
     } as URLData)
     .then(() => {
       res.status(200).json({
-        uuidCode: generated,
+        uuid_code: generated,
       });
     })
     .catch(() => {
       res.status(500).json({
-        errorMsg: 'failed to create url data',
+        error_msg: 'failed to create url data',
       });
     });
 }

@@ -1,12 +1,12 @@
-export interface UserData {
+export type UserData = {
   id?: number;
   email: string;
   username: string;
-}
+};
 
-export interface URLData {
+export type URLData = {
   id?: number;
-  id_user: string;
+  id_user?: string;
   url_name?: string;
   uuid_code: string;
   ref_url: string;
@@ -14,4 +14,4 @@ export interface URLData {
   created_at: number;
   last_modified_at: number;
   expire_at?: number;
-}
+};
