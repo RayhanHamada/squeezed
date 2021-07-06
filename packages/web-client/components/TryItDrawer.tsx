@@ -77,6 +77,8 @@ export const TryItDrawer: React.FC<Props> = ({ isOpen, onClose }) => {
                   h="32"
                   onChange={onTextBoxChange}
                   border="1px"
+                  borderTop="4px"
+                  borderRight="4px"
                   borderColor="black"
                 />
                 <Text textColor="red" fontSize="sm">
@@ -104,7 +106,7 @@ export const TryItDrawer: React.FC<Props> = ({ isOpen, onClose }) => {
                 onClick={fetchAnonURL}
                 borderTop="8px"
                 borderRight="8px"
-                isDisabled={!isRefURLValid}
+                isDisabled={!isRefURLValid || refURL === ''}
               >
                 Generate !
               </Button>

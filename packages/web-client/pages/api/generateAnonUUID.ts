@@ -1,6 +1,6 @@
 import { dayjs } from '@/lib/dayjs';
-import { URLData } from '@/lib/entities';
 import { admin } from '@/lib/firebase-admin';
+import { URLData } from '@/lib/model-types';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import short from 'short-uuid';
 
