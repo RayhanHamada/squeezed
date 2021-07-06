@@ -1,3 +1,4 @@
+import { fb } from '@/lib/firebase-client';
 import {
   Box,
   Button,
@@ -13,6 +14,7 @@ import {
 } from '@chakra-ui/react';
 import { useRouter } from 'next/dist/client/router';
 import React, { MouseEventHandler } from 'react';
+import { useAuthState } from 'react-firebase-hooks/auth';
 import { IconType } from 'react-icons';
 import { BiLogOut } from 'react-icons/bi';
 import { FaChevronDown, FaCog } from 'react-icons/fa';
@@ -28,7 +30,7 @@ type Menu = {
 };
 
 export const Navbar: React.FC = (_props) => {
-  // const [user, loading, error] = useAuthState(fb.auth());
+  const [user, loading, error] = useAuthState(fb.auth());
 
   const router = useRouter();
 
@@ -52,10 +54,10 @@ export const Navbar: React.FC = (_props) => {
     {
       text: 'Sign Out',
       Icon: BiLogOut,
-      onClick: (e) => {
+      onClick: async (e) => {
         e.preventDefault();
-        // TODO sign out from firebase
-        router.push('/');
+
+        await fb.auth().signOut();
       },
     },
   ];
@@ -80,9 +82,9 @@ export const Navbar: React.FC = (_props) => {
       </Center>
       <Spacer />
       <Center>
-        {false ? (
+        {loading ? (
           <Spinner color="white" />
-        ) : false ? (
+        ) : Boolean(user) ? (
           <Menu>
             {({ isOpen }) => (
               <>
@@ -97,11 +99,11 @@ export const Navbar: React.FC = (_props) => {
                   _hover={{ opacity: 0.7 }}
                   _active={{ bgColor: 'black' }}
                 >
-                  {'John Doe'}
+                  {user?.displayName ?? 'John Doe'}
                 </MenuButton>
                 <MenuList bgColor="white" textColor="black">
-                  {menus.map(({ text, Icon }, idx) => (
-                    <MenuItem key={idx} icon={<Icon />}>
+                  {menus.map(({ text, Icon, onClick }, idx) => (
+                    <MenuItem key={idx} icon={<Icon />} onClick={onClick}>
                       {text}
                     </MenuItem>
                   ))}

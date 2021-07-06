@@ -67,7 +67,7 @@ export default function Home() {
 
   const { setSignInOnOpen, setSignUpOnOpen } = useModalData();
 
-  const [user, loading, error] = useAuthState(fb.auth());
+  const [user, loading] = useAuthState(fb.auth());
 
   /**
    * register callback ke state zustand
@@ -76,6 +76,13 @@ export default function Home() {
     setSignInOnOpen(onSignInOpen);
     setSignUpOnOpen(onSignUpOpen);
   }, [setSignInOnOpen, setSignUpOnOpen, onSignInOpen, onSignUpOpen]);
+
+  useEffect(() => {
+    if (user) {
+      onSignInClose();
+      onSignUpClose();
+    }
+  }, [user, onSignInClose, onSignUpClose]);
 
   return (
     <Container

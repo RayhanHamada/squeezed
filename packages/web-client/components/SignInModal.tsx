@@ -1,3 +1,4 @@
+import { fb } from '@/lib/firebase-client';
 import {
   Box,
   Button,
@@ -15,9 +16,11 @@ import {
   ModalContent,
   ModalHeader,
   ModalOverlay,
+  Text,
 } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { MouseEventHandler, useState } from 'react';
+import { useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth';
 import { useForm } from 'react-hook-form';
 import {
   AiOutlineEye,
@@ -44,6 +47,9 @@ type Props = {
 
 export const SignInModal: React.FC<Props> = ({ isOpen, onClose }) => {
   const [passwordVisible, togglePasswordVisible] = useState(false);
+
+  const [signIn, , loading, error] = useSignInWithEmailAndPassword(fb.auth());
+
   const {
     formState: { errors, isValid, isSubmitting },
     register,
@@ -58,9 +64,11 @@ export const SignInModal: React.FC<Props> = ({ isOpen, onClose }) => {
   };
 
   const onSubmit = handleSubmit(
-    async (data) => {
+    async ({ email, password }) => {
       console.log(`isvalid ${isValid}`);
-      console.log(`${data.email} ${data.password}`);
+      console.log(`${email} ${password}`);
+
+      signIn(email, password);
     },
     (errors) => {
       console.log(`isvalid ${isValid}`);
@@ -83,8 +91,14 @@ export const SignInModal: React.FC<Props> = ({ isOpen, onClose }) => {
         <ModalCloseButton color="white" />
         <ModalBody>
           <form onSubmit={onSubmit}>
-            <FormControl id="email" isInvalid={Boolean(errors.email)}>
-              <FormLabel textColor="white">Email</FormLabel>
+            <FormControl
+              id="email"
+              isInvalid={Boolean(errors.email)}
+              isDisabled={loading}
+            >
+              <FormLabel textColor="white" htmlFor="email">
+                Email
+              </FormLabel>
               <InputGroup>
                 <InputLeftElement pointerEvents="none">
                   <AiOutlineMail color="white" />
@@ -104,8 +118,14 @@ export const SignInModal: React.FC<Props> = ({ isOpen, onClose }) => {
               </FormErrorMessage>
             </FormControl>
             <Box h="8"></Box>
-            <FormControl id="password" isInvalid={Boolean(errors.password)}>
-              <FormLabel textColor="white">Password</FormLabel>
+            <FormControl
+              id="password"
+              isInvalid={Boolean(errors.password)}
+              isDisabled={loading}
+            >
+              <FormLabel textColor="white" htmlFor="password">
+                Password
+              </FormLabel>
               <InputGroup>
                 <InputLeftElement pointerEvents="none">
                   <AiOutlineLock color="white" />
@@ -153,11 +173,13 @@ export const SignInModal: React.FC<Props> = ({ isOpen, onClose }) => {
               isLoading={isSubmitting}
               type="submit"
               _hover={{ opacity: 0.7 }}
-              //   disabled={!isValid}
+              disabled={loading}
             >
               Sign In
             </Button>
           </form>
+
+          <Text textColor="red">{error?.message}</Text>
         </ModalBody>
       </ModalContent>
     </Modal>
