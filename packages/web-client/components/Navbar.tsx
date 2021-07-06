@@ -1,10 +1,14 @@
+import { fb } from '@/lib/firebase-client';
 import { Box, Center, Flex, Spacer, Text } from '@chakra-ui/react';
 import React from 'react';
+import { useAuthState } from 'react-firebase-hooks/auth';
 import { SignInButton } from './SignInButton';
 import { SignUpButton } from './SignUpButton';
 import { SqueezedLogo } from './SqueezedLogo';
 
 export const Navbar: React.FC = (_props) => {
+  const [user, loading, error] = useAuthState(fb.auth());
+
   return (
     <Flex
       w="full"
@@ -25,10 +29,16 @@ export const Navbar: React.FC = (_props) => {
       </Center>
       <Spacer />
       <Center>
-        <SignInButton />
-      </Center>
-      <Center pl="4">
-        <SignUpButton />
+        {user ? undefined : (
+          <Flex>
+            <Center>
+              <SignInButton />
+            </Center>
+            <Center pl="4">
+              <SignUpButton />
+            </Center>
+          </Flex>
+        )}
       </Center>
     </Flex>
   );
