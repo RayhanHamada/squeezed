@@ -1,12 +1,13 @@
 export type UserData = {
-  id?: number;
+  id?: string;
+  uid?: string;
   email: string;
   username: string;
 };
 
 export type URLData = {
-  id?: number;
-  id_user?: string;
+  id?: string;
+  uid?: string;
   url_name?: string;
   uuid_code: string;
   ref_url: string;

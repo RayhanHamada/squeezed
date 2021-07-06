@@ -1,4 +1,5 @@
 import { ChakraProvider } from '@chakra-ui/react';
+import 'firebase/auth';
 import type { AppProps } from 'next/app';
 
 function MyApp({ Component, pageProps }: AppProps) {

@@ -73,7 +73,7 @@ export const useTryItStore = createStore(
               if (isDev) {
                 console.log(err);
               }
-              set(() => ({ isError: true }));
+              set(() => ({ isFetching: false, isError: true }));
             });
 
           if (get().isError) {
@@ -101,5 +101,47 @@ export const useTryItStore = createStore(
       name: 'try-it-store',
       getStorage: () => sessionStorage,
     }
+  )
+);
+
+export const useSignUpStore = createStore(
+  combine(
+    {
+      isLoading: false,
+      isError: false,
+      loadingMsg: '',
+    },
+    (set) => ({
+      goSignUp: async (username: string, email: string, password: string) => {
+        set(() => ({ isLoading: true, loadingMsg: 'Please wait...' }));
+
+        await axios
+          .post(`${baseURL}/api/createUser`, {
+            username,
+            email,
+            password,
+          })
+          .then(() => {
+            set(() => ({
+              loadingMsg: 'Success creating user',
+            }));
+
+            setTimeout(() => {
+              set(() => ({ isLoading: false, loadingMsg: '' }));
+            }, 3000);
+          })
+          .catch((err) => {
+            if (isDev) {
+              console.log(err);
+            }
+
+            set(() => ({ isError: true, loadingMsg: 'Failed creating user' }));
+
+            setTimeout(() => {
+              set(() => ({ isLoading: false, isError: false, loadingMsg: '' }));
+            }, 3000);
+          });
+      },
+    })
   )
 );

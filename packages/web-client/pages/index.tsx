@@ -2,17 +2,20 @@ import { Navbar } from '@/components/Navbar';
 import { SignInModal } from '@/components/SignInModal';
 import { SignUpModal } from '@/components/SignUpModal';
 import { TryItDrawer } from '@/components/TryItDrawer';
+import { fb } from '@/lib/firebase-client';
 import { useModalData } from '@/lib/store';
 import {
   Button,
   Center,
   Container,
   Flex,
+  Spinner,
   Text,
   useDisclosure,
 } from '@chakra-ui/react';
 import Head from 'next/head';
 import { useEffect } from 'react';
+import { useAuthState } from 'react-firebase-hooks/auth';
 import {
   AiOutlineCloud,
   AiOutlineDashboard,
@@ -64,6 +67,8 @@ export default function Home() {
 
   const { setSignInOnOpen, setSignUpOnOpen } = useModalData();
 
+  const [user, loading, error] = useAuthState(fb.auth());
+
   /**
    * register callback ke state zustand
    */
@@ -105,14 +110,18 @@ export default function Home() {
         to share links.
       </Text>
       <Center paddingTop="8">
-        <Button
-          alignSelf="center"
-          size="lg"
-          _hover={{ opacity: 0.7 }}
-          onClick={onDrawerOpen}
-        >
-          Try Free Now
-        </Button>
+        {loading ? (
+          <Spinner color="white" />
+        ) : !user ? (
+          <Button
+            alignSelf="center"
+            size="lg"
+            _hover={{ opacity: 0.7 }}
+            onClick={onDrawerOpen}
+          >
+            Try Free Now
+          </Button>
+        ) : undefined}
       </Center>
 
       {/* Why Section */}

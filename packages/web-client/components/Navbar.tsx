@@ -1,5 +1,3 @@
-require('firebase/auth');
-import { fb } from '@/lib/firebase-client';
 import {
   Box,
   Button,
@@ -13,8 +11,8 @@ import {
   Spinner,
   Text,
 } from '@chakra-ui/react';
-import React from 'react';
-import { useAuthState } from 'react-firebase-hooks/auth';
+import { useRouter } from 'next/dist/client/router';
+import React, { MouseEventHandler } from 'react';
 import { IconType } from 'react-icons';
 import { BiLogOut } from 'react-icons/bi';
 import { FaChevronDown, FaCog } from 'react-icons/fa';
@@ -26,29 +24,41 @@ import { SqueezedLogo } from './SqueezedLogo';
 type Menu = {
   text: string;
   Icon: IconType;
-  route: `/${string}`;
+  onClick: MouseEventHandler<HTMLButtonElement>;
 };
 
-const menus: Menu[] = [
-  {
-    text: 'Dashboard',
-    Icon: MdDashboard,
-    route: '/dashboard',
-  },
-  {
-    text: 'Settings',
-    Icon: FaCog,
-    route: '/settings',
-  },
-  {
-    text: 'Sign Out',
-    Icon: BiLogOut,
-    route: '/',
-  },
-];
-
 export const Navbar: React.FC = (_props) => {
-  const [user, loading, error] = useAuthState(fb.auth());
+  // const [user, loading, error] = useAuthState(fb.auth());
+
+  const router = useRouter();
+
+  const menus: Menu[] = [
+    {
+      text: 'Dashboard',
+      Icon: MdDashboard,
+      onClick: (e) => {
+        e.preventDefault();
+        router.push('/dashboard');
+      },
+    },
+    {
+      text: 'Settings',
+      Icon: FaCog,
+      onClick: (e) => {
+        e.preventDefault();
+        router.push('/settings');
+      },
+    },
+    {
+      text: 'Sign Out',
+      Icon: BiLogOut,
+      onClick: (e) => {
+        e.preventDefault();
+        // TODO sign out from firebase
+        router.push('/');
+      },
+    },
+  ];
 
   return (
     <Flex
@@ -70,9 +80,9 @@ export const Navbar: React.FC = (_props) => {
       </Center>
       <Spacer />
       <Center>
-        {loading ? (
+        {false ? (
           <Spinner color="white" />
-        ) : user ? (
+        ) : false ? (
           <Menu>
             {({ isOpen }) => (
               <>
@@ -87,7 +97,7 @@ export const Navbar: React.FC = (_props) => {
                   _hover={{ opacity: 0.7 }}
                   _active={{ bgColor: 'black' }}
                 >
-                  {user ?? 'John Doe'}
+                  {'John Doe'}
                 </MenuButton>
                 <MenuList bgColor="white" textColor="black">
                   {menus.map(({ text, Icon }, idx) => (

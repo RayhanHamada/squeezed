@@ -1,6 +1,8 @@
+import { useSignUpStore } from '@/lib/store';
 import {
   Box,
   Button,
+  Flex,
   FormControl,
   FormErrorMessage,
   FormLabel,
@@ -15,6 +17,8 @@ import {
   ModalContent,
   ModalHeader,
   ModalOverlay,
+  Text,
+  useToast,
 } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { MouseEventHandler, useState } from 'react';
@@ -52,37 +56,56 @@ type Props = {
 export const SignUpModal: React.FC<Props> = ({ isOpen, onClose }) => {
   const [passwordVisible, togglePasswordVisible] = useState(false);
 
+  const toast = useToast({
+    title: 'Success',
+    description: 'Registration Success',
+    duration: 3000,
+    position: 'bottom',
+    status: 'success',
+  });
+
   const {
     formState: { errors, isValid, isSubmitting },
     register,
     handleSubmit,
     setError,
+    reset,
+    setValue,
   } = useForm<FormFieldValue>({
     resolver: yupResolver(formFieldSchema),
   });
 
-  const handleShowPass: MouseEventHandler<HTMLButtonElement> = (e) => {
-    e.preventDefault();
-    togglePasswordVisible((s) => !s);
-  };
+  const { goSignUp, isLoading, loadingMsg, isError } = useSignUpStore();
 
   const onSubmit = handleSubmit(
-    async (data) => {
-      console.log(`isvalid ${isValid}`);
-      console.log(`${data.email} ${data.password}`);
-
-      if (data.password !== data.passwordConfirmation) {
+    async ({ email, password, passwordConfirmation, username }) => {
+      console.log('submitted');
+      if (password !== passwordConfirmation) {
         setError('passwordConfirmation', {
           message: 'password confirmation not match with password !',
         });
-        return;
+
+        setValue('password', '');
+        setValue('passwordConfirmation', '');
       }
+
+      await goSignUp(username, email, password).then(() => {
+        toast();
+        reset();
+      });
+      return;
     },
     (errors) => {
       console.log(`isvalid ${isValid}`);
       console.log(errors);
     }
   );
+
+  const handleShowPass: MouseEventHandler<HTMLButtonElement> = (e) => {
+    e.preventDefault();
+    togglePasswordVisible((s) => !s);
+  };
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
@@ -99,7 +122,11 @@ export const SignUpModal: React.FC<Props> = ({ isOpen, onClose }) => {
         <ModalCloseButton color="white" />
         <ModalBody>
           <form onSubmit={onSubmit}>
-            <FormControl id="username" isInvalid={Boolean(errors.username)}>
+            <FormControl
+              id="username"
+              isInvalid={Boolean(errors.username)}
+              isDisabled={isSubmitting}
+            >
               <FormLabel textColor="white">Username</FormLabel>
               <InputGroup>
                 <InputLeftElement pointerEvents="none">
@@ -120,7 +147,11 @@ export const SignUpModal: React.FC<Props> = ({ isOpen, onClose }) => {
               </FormErrorMessage>
             </FormControl>
             <Box h="8"></Box>
-            <FormControl id="email" isInvalid={Boolean(errors.email)}>
+            <FormControl
+              id="email"
+              isInvalid={Boolean(errors.email)}
+              isDisabled={isSubmitting}
+            >
               <FormLabel textColor="white">Email</FormLabel>
               <InputGroup>
                 <InputLeftElement pointerEvents="none">
@@ -141,7 +172,11 @@ export const SignUpModal: React.FC<Props> = ({ isOpen, onClose }) => {
               </FormErrorMessage>
             </FormControl>
             <Box h="8"></Box>
-            <FormControl id="password" isInvalid={Boolean(errors.password)}>
+            <FormControl
+              id="password"
+              isInvalid={Boolean(errors.password)}
+              isDisabled={isSubmitting}
+            >
               <FormLabel textColor="white">Password</FormLabel>
               <InputGroup>
                 <InputLeftElement pointerEvents="none">
@@ -188,6 +223,7 @@ export const SignUpModal: React.FC<Props> = ({ isOpen, onClose }) => {
             <FormControl
               id="passwordConfirmation"
               isInvalid={Boolean(errors.passwordConfirmation)}
+              isDisabled={isSubmitting}
             >
               <FormLabel textColor="white">Password Confirmation</FormLabel>
               <InputGroup>
@@ -237,11 +273,16 @@ export const SignUpModal: React.FC<Props> = ({ isOpen, onClose }) => {
               isLoading={isSubmitting}
               type="submit"
               _hover={{ opacity: 0.7 }}
-              //   disabled={!isValid}
+              isDisabled={isSubmitting}
             >
               Sign Up
             </Button>
           </form>
+          {isLoading ? (
+            <Flex flexDir="column" alignItems="center">
+              <Text textColor={isError ? 'red' : 'white'}>{loadingMsg}</Text>
+            </Flex>
+          ) : undefined}
         </ModalBody>
       </ModalContent>
     </Modal>
