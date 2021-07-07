@@ -3,7 +3,7 @@ import { SignInModal } from '@/components/SignInModal';
 import { SignUpModal } from '@/components/SignUpModal';
 import { TryItDrawer } from '@/components/TryItDrawer';
 import { fb } from '@/lib/firebase-client';
-import { useModalData } from '@/lib/store';
+import { useModalData, useUserDataStore } from '@/lib/store';
 import {
   Button,
   Center,
@@ -68,6 +68,7 @@ export default function Home() {
   const { setSignInOnOpen, setSignUpOnOpen } = useModalData();
 
   const [user, loading] = useAuthState(fb.auth());
+  const { updateAll } = useUserDataStore();
 
   /**
    * register callback ke state zustand
@@ -78,11 +79,23 @@ export default function Home() {
   }, [setSignInOnOpen, setSignUpOnOpen, onSignInOpen, onSignUpOpen]);
 
   useEffect(() => {
+    /**
+     * tutup modal sign in ataupun sign up
+     */
     if (user) {
       onSignInClose();
       onSignUpClose();
+
+      /**
+       * kalo user exists update state user
+       */
+      updateAll({
+        uid: user.uid,
+        username: user.displayName ?? undefined,
+        email: user.email ?? undefined,
+      });
     }
-  }, [user, onSignInClose, onSignUpClose]);
+  }, [user, onSignInClose, onSignUpClose, updateAll]);
 
   return (
     <Container

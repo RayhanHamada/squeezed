@@ -1,4 +1,5 @@
 import { fb } from '@/lib/firebase-client';
+import { useURLDataStore, useUserDataStore } from '@/lib/store';
 import {
   Box,
   Button,
@@ -31,6 +32,8 @@ type Menu = {
 
 export const Navbar: React.FC = (_props) => {
   const [user, loading, error] = useAuthState(fb.auth());
+  const resetUserDataStore = useUserDataStore((sel) => sel.reset);
+  const resetURLDataStore = useURLDataStore((sel) => sel.reset);
 
   const router = useRouter();
 
@@ -57,7 +60,13 @@ export const Navbar: React.FC = (_props) => {
       onClick: async (e) => {
         e.preventDefault();
 
-        await fb.auth().signOut();
+        await fb
+          .auth()
+          .signOut()
+          .then(() => {
+            resetURLDataStore();
+            resetUserDataStore();
+          });
       },
     },
   ];

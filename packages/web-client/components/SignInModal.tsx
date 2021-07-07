@@ -2,6 +2,7 @@ import { fb } from '@/lib/firebase-client';
 import {
   Box,
   Button,
+  Center,
   FormControl,
   FormErrorMessage,
   FormLabel,
@@ -16,6 +17,7 @@ import {
   ModalContent,
   ModalHeader,
   ModalOverlay,
+  Spinner,
   Text,
 } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -65,9 +67,6 @@ export const SignInModal: React.FC<Props> = ({ isOpen, onClose }) => {
 
   const onSubmit = handleSubmit(
     async ({ email, password }) => {
-      console.log(`isvalid ${isValid}`);
-      console.log(`${email} ${password}`);
-
       signIn(email, password);
     },
     (errors) => {
@@ -75,6 +74,7 @@ export const SignInModal: React.FC<Props> = ({ isOpen, onClose }) => {
       console.log(errors);
     }
   );
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
@@ -179,7 +179,14 @@ export const SignInModal: React.FC<Props> = ({ isOpen, onClose }) => {
             </Button>
           </form>
 
-          <Text textColor="red">{error?.message}</Text>
+          <Center mt="4">
+            <Text textColor="red">
+              {error?.message ? 'The password is invalid' : ''}
+            </Text>
+          </Center>
+          <Center mt="4">
+            {loading ? <Spinner color="white" /> : undefined}
+          </Center>
         </ModalBody>
       </ModalContent>
     </Modal>

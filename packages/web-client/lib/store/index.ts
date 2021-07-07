@@ -104,6 +104,39 @@ export const useTryItStore = createStore(
   )
 );
 
+export const useUserDataStore = createStore(
+  persist(
+    combine(
+      {
+        username: '',
+        uid: '',
+        email: '',
+      },
+      (set) => ({
+        setUsername: (username: string) => set(() => ({ username })),
+        setUID: (uid: string) => set(() => ({ uid })),
+        updateAll: (all: { [K in 'username' | 'uid' | 'email']?: string }) =>
+          set((state) => ({
+            username: all.username ?? state.username,
+            email: all.email ?? state.email,
+            uid: all.uid ?? state.uid,
+          })),
+
+        reset: () =>
+          set(() => ({
+            username: '',
+            uid: '',
+            email: '',
+          })),
+      })
+    ),
+    {
+      name: 'user-store',
+      getStorage: () => sessionStorage,
+    }
+  )
+);
+
 export const useSignUpStore = createStore(
   combine(
     {
@@ -143,5 +176,21 @@ export const useSignUpStore = createStore(
           });
       },
     })
+  )
+);
+
+export const useURLDataStore = createStore(
+  persist(
+    combine(
+      {
+        selectedURLDataID: '',
+      },
+      (set) => ({
+        setSelectedURLDataID: (id: string) =>
+          set(() => ({ selectedURLDataID: id })),
+        reset: () => set(() => ({ selectedURLDataID: '' })),
+      })
+    ),
+    { name: 'url-data-store', getStorage: () => sessionStorage }
   )
 );
