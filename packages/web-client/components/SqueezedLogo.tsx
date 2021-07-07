@@ -11,7 +11,7 @@ export const SqueezedLogo: React.FC<Props> = ({ fontSize }) => {
 
   const refresh: MouseEventHandler = (e) => {
     e.preventDefault();
-    router.reload();
+    router.push('/');
   };
 
   return (
