@@ -10,11 +10,16 @@ export const Redirecting: React.FC = (props) => {
       marginX="0"
       bgColor="black"
     >
-      <Flex flexDir="column" justifyContent="center" alignItems="center">
+      <Flex
+        flexDir="column"
+        justifyContent="center"
+        alignItems="center"
+        h="100vh"
+      >
         <Text textColor="white" textAlign="center">
-          Redirecting...
+          Redirecting to home
         </Text>
-        <Spinner color="white" />
+        <Spinner mt="4" color="white" />
       </Flex>
     </Container>
   );
