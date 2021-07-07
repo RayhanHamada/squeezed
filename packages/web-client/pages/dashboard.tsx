@@ -1,7 +1,6 @@
 import { Navbar } from '@/components/Navbar';
 import { Redirecting } from '@/components/Redirecting';
 import { fb } from '@/lib/firebase-client';
-import { URLData } from '@/lib/model-types';
 import { useUserDataStore } from '@/lib/store';
 import {
   Box,
@@ -9,7 +8,6 @@ import {
   Container,
   Divider,
   Flex,
-  Grid,
   Skeleton,
   Spacer,
   Text,
@@ -69,44 +67,94 @@ export default function Dashboard() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Container maxW="full" pt="8">
-        <Grid templateColumns="repeat(auto-fit, 1fr)" maxH="full">
-          <Flex flexDir="column" px="4" h="50vh" maxH="full">
-            <Flex>
-              <Text textColor="white" fontSize="2xl" fontWeight="bold">
-                Your Links
+        <Flex flexDir="column" px="4" h="50vh" maxH="full">
+          <Flex>
+            <Text textColor="white" fontSize="2xl" fontWeight="bold">
+              Your Links
+            </Text>
+            {/* <Box w="8" /> */}
+            <Spacer />
+            <Button rightIcon={<FaPlus />}>Create Link</Button>
+          </Flex>
+          <Box h="4" />
+          <Skeleton isLoaded={!isCollectionLoading}>
+            {false ? (
+              <Text textColor="white" textAlign="center">
+                Seems empty. Create your link by clicking the white button on
+                the right.
               </Text>
-              {/* <Box w="8" /> */}
-              <Spacer />
-              <Button rightIcon={<FaPlus />}>Create Link</Button>
-            </Flex>
-            <Box h="4" />
-            <Skeleton isLoaded={!isCollectionLoading} h="full">
-              {!snapshot || snapshot?.docs.length === 0 ? (
-                <Text textColor="white" textAlign="center">
-                  Seems empty. Create your link by clicking the white button on
-                  the right.
-                </Text>
-              ) : (
-                <Flex flexDir="column" overflowY="scroll">
-                  {snapshot.docs.map((doc) => {
+            ) : (
+              <Flex flexDir="column" overflowY="auto" h="40vh">
+                {/* {snapshot.docs.map((doc) => {
                     const urlData: URLData = {
                       id: doc.ref.id,
                       ...doc.data(),
                     };
 
-                    return;
-                  })}
-                </Flex>
-              )}
-            </Skeleton>
-          </Flex>
-          <Divider color="white" />
-          <Flex flexDir="column" maxH="full" h="full" px="4" pt="4">
-            <Text textColor="white" fontSize="2xl" fontWeight="bold">
-              Link Title
-            </Text>
-          </Flex>
-        </Grid>
+                    return 
+                  })} */}
+
+                <Box h="8" textColor="white">
+                  p
+                </Box>
+                <Box h="8" textColor="white">
+                  p
+                </Box>
+                <Box h="8" textColor="white">
+                  p
+                </Box>
+                <Box h="8" textColor="white">
+                  p
+                </Box>
+                <Box h="8" textColor="white">
+                  p
+                </Box>
+                <Box h="8" textColor="white">
+                  p
+                </Box>
+                <Box h="8" textColor="white">
+                  p
+                </Box>
+                <Box h="8" textColor="white">
+                  p
+                </Box>
+                <Box h="8" textColor="white">
+                  p
+                </Box>
+                <Box h="8" textColor="white">
+                  p
+                </Box>
+                <Box h="8" textColor="white">
+                  p
+                </Box>
+                <Box h="8" textColor="white">
+                  p
+                </Box>
+                <Box h="8" textColor="white">
+                  p
+                </Box>
+                <Box h="8" textColor="white">
+                  p
+                </Box>
+                <Box h="8" textColor="white">
+                  p
+                </Box>
+                <Box h="8" textColor="white">
+                  p
+                </Box>
+              </Flex>
+            )}
+          </Skeleton>
+        </Flex>
+        <Divider color="white" />
+        <Flex flexDir="column" maxH="full" h="full" px="4" pt="4">
+          <Text textColor="white" fontSize="2xl" fontWeight="bold">
+            Link Title
+          </Text>
+        </Flex>
+        {/* <Grid templateColumns="repeat(auto-fit, 1fr)" maxH="full">
+          
+        </Grid> */}
       </Container>
     </Container>
   );
