@@ -17,7 +17,9 @@ export default async function handler(
 
   const generated: string = short.generate();
   const now = dayjs.utc().unix();
-  const utcExpiredAt = dayjs.utc(expire_at).unix();
+  const utcExpiredAt = expire_at
+    ? dayjs.utc().add(expire_at, 'hours').unix()
+    : null;
 
   await admin
     .firestore()

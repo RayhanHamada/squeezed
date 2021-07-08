@@ -219,6 +219,17 @@ export const useCreateLinkStore = createStore(
         setCreateLinkTitle: (linkTitle: string) =>
           set(() => ({ createLinkTitle: linkTitle })),
 
+        reset: () =>
+          set(() => ({
+            createLinkTitle: '',
+            createLinkRefURL: '',
+            createLinkExpire: undefined,
+            isRefURLValid: true,
+            radioState: '1',
+            enabled: true,
+            generatedCode: '',
+          })),
+
         onTextBoxChange: (e: ChangeEvent<HTMLTextAreaElement>) => {
           const refURL = e.target.value;
 
@@ -275,19 +286,21 @@ export const useCreateLinkStore = createStore(
               const { uuid_code } =
                 res.data as GenerateAuthenticatedUUIDResponse;
 
-              set(() => ({ isFetching: false, generatedCode: uuid_code! }));
+              set(() => ({ generatedCode: uuid_code! }));
             })
             .catch((err) => {
               if (isDev) {
                 console.log(err);
               }
 
-              set(() => ({ isFetching: false, isError: true }));
+              set(() => ({ isError: true }));
 
               setTimeout(() => {
                 set(() => ({ isError: false }));
               }, 1000);
             });
+
+          set(() => ({ isFetching: false }));
         },
       })
     ),
