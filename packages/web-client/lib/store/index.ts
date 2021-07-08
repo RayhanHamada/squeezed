@@ -1,5 +1,5 @@
 import { baseURL, isDev } from '@/global';
-import { ChangeEventHandler, MouseEventHandler } from 'react';
+import { ChangeEvent, ChangeEventHandler, MouseEventHandler } from 'react';
 import axios from 'redaxios';
 import createStore from 'zustand';
 import { combine, persist } from 'zustand/middleware';
@@ -192,5 +192,43 @@ export const useURLDataStore = createStore(
       })
     ),
     { name: 'url-data-store', getStorage: () => sessionStorage }
+  )
+);
+
+export const useCreateLinkStore = createStore(
+  persist(
+    combine(
+      {
+        createLinkTitle: '',
+        createLinkRefURL: '',
+        createLinkExpire: undefined as number | undefined,
+        isRefURLValid: true,
+      },
+      (set) => ({
+        setCreateLinkTitle: (linkTitle: string) =>
+          set(() => ({ createLinkTitle: linkTitle })),
+
+        onTextBoxChange: (e: ChangeEvent<HTMLTextAreaElement>) => {
+          const refURL = e.target.value;
+
+          if (!urlRegex.test(refURL)) {
+            set(() => ({ isRefURLValid: false }));
+            return;
+          }
+
+          set(() => ({ isRefURLValid: true, createLinkRefURL: refURL }));
+        },
+
+        /**
+         * if linkExpire is empty then no expiration time.
+         */
+        setLinkExpire: (linkExpire?: number) =>
+          set(() => ({ createLinkExpire: linkExpire })),
+      })
+    ),
+    {
+      name: 'create-link-drawer',
+      getStorage: () => sessionStorage,
+    }
   )
 );
