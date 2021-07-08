@@ -6,7 +6,7 @@ export type GenerateAuthenticatedUUIDBody = {
   expire_at?: number;
 };
 
-export type GenerateAuthenticatedResponse = {
+export type GenerateAuthenticatedUUIDResponse = {
   error_msg?: string;
   uuid_code?: string;
 };

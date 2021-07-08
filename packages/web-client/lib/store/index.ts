@@ -7,6 +7,7 @@ import {
   GenerateAnonUUIDBody,
   GenerateAnonUUIDResponse,
   GenerateAuthenticatedUUIDBody,
+  GenerateAuthenticatedUUIDResponse,
 } from '../api-typings';
 import { urlRegex } from '../utils';
 
@@ -271,9 +272,10 @@ export const useCreateLinkStore = createStore(
               expire_at: createLinkExpire,
             } as GenerateAuthenticatedUUIDBody)
             .then((res) => {
-              const { uuid_code } = res.data as { uuid_code: string };
+              const { uuid_code } =
+                res.data as GenerateAuthenticatedUUIDResponse;
 
-              set(() => ({ isFetching: false, generatedCode: uuid_code }));
+              set(() => ({ isFetching: false, generatedCode: uuid_code! }));
             })
             .catch((err) => {
               if (isDev) {

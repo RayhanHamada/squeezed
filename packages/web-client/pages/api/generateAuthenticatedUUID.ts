@@ -1,6 +1,6 @@
 import {
-  GenerateAuthenticatedResponse,
   GenerateAuthenticatedUUIDBody,
+  GenerateAuthenticatedUUIDResponse,
 } from '@/lib/api-typings';
 import { dayjs } from '@/lib/dayjs';
 import { admin } from '@/lib/firebase-admin';
@@ -10,7 +10,7 @@ import short from 'short-uuid';
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<GenerateAuthenticatedResponse>
+  res: NextApiResponse<GenerateAuthenticatedUUIDResponse>
 ) {
   const { uid, title, ref_url, enabled, expire_at } =
     req.body as GenerateAuthenticatedUUIDBody;
@@ -35,11 +35,11 @@ export default async function handler(
     .then(() => {
       res.status(200).json({
         uuid_code: generated,
-      });
+      } as GenerateAuthenticatedUUIDResponse);
     })
     .catch(() => {
       res.status(500).json({
         error_msg: 'failed to create url data',
-      });
+      } as GenerateAuthenticatedUUIDResponse);
     });
 }
