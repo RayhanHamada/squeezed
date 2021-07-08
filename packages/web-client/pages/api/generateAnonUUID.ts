@@ -1,40 +1,41 @@
+import {
+  generateAnonUUIDBody,
+  generateAnonUUIDResponse,
+} from '@/lib/api-typings';
 import { dayjs } from '@/lib/dayjs';
 import { admin } from '@/lib/firebase-admin';
 import { URLData } from '@/lib/model-types';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import short from 'short-uuid';
 
-type Data = {
-  error_msg?: string;
-  uuid_code?: string;
-};
-
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Data>
+  res: NextApiResponse<generateAnonUUIDResponse>
 ) {
-  const realURL = req.body.url as string;
+  const { ref_url } = req.body as generateAnonUUIDBody;
   const generated: string = short.generate();
   const now = dayjs.utc().unix();
+  const expire_at = dayjs.utc().add(24, 'hour').unix();
 
   await admin
     .firestore()
     .collection('url_data')
     .add({
-      enabled: true,
-      ref_url: realURL,
-      uuid_code: generated,
+      ref_url,
+      expire_at,
       created_at: now,
       last_modified_at: now,
+      enabled: true,
+      uuid_code: generated,
     } as URLData)
     .then(() => {
       res.status(200).json({
         uuid_code: generated,
-      });
+      } as generateAnonUUIDResponse);
     })
     .catch(() => {
       res.status(500).json({
         error_msg: 'failed to create url data',
-      });
+      } as generateAnonUUIDResponse);
     });
 }

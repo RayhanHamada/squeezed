@@ -3,7 +3,11 @@ import { ChangeEvent, ChangeEventHandler, MouseEventHandler } from 'react';
 import axios from 'redaxios';
 import createStore from 'zustand';
 import { combine, persist } from 'zustand/middleware';
-import { GenerateAuthenticatedUUIDBody } from '../types';
+import {
+  generateAnonUUIDBody,
+  generateAnonUUIDResponse,
+  GenerateAuthenticatedUUIDBody,
+} from '../api-typings';
 import { urlRegex } from '../utils';
 
 export const useModalData = createStore(
@@ -56,19 +60,18 @@ export const useTryItStore = createStore(
         fetchAnonURL: async () => {
           set(() => ({ isFetching: true }));
 
-          const realURL = get().refURL;
+          const { refURL } = get();
 
           await axios
             .post(`${baseURL}/api/generateAnonUUID`, {
-              url: realURL,
-            })
+              ref_url: refURL,
+            } as generateAnonUUIDBody)
             .then(async (res) => {
               set(() => ({ isFetching: false }));
 
-              const json = res.data;
-              console.log(json);
-              const uuidCode = json.uuid_code as string;
-              set(() => ({ shortenedURL: `sqzd.xyz/${uuidCode}` }));
+              const { uuid_code } = res.data as generateAnonUUIDResponse;
+
+              set(() => ({ shortenedURL: `sqzd.xyz/${uuid_code}` }));
             })
             .catch((err) => {
               if (isDev) {

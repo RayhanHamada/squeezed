@@ -1,18 +1,16 @@
+import {
+  GenerateAuthenticatedResponse,
+  GenerateAuthenticatedUUIDBody,
+} from '@/lib/api-typings';
 import { dayjs } from '@/lib/dayjs';
 import { admin } from '@/lib/firebase-admin';
 import { URLData } from '@/lib/model-types';
-import { GenerateAuthenticatedUUIDBody } from '@/lib/types';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import short from 'short-uuid';
 
-type Data = {
-  error_msg?: string;
-  uuid_code?: string;
-};
-
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Data>
+  res: NextApiResponse<GenerateAuthenticatedResponse>
 ) {
   const { uid, title, ref_url, enabled, expire_at } =
     req.body as GenerateAuthenticatedUUIDBody;
