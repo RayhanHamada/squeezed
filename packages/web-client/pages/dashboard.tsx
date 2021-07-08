@@ -102,7 +102,7 @@ export default function Dashboard() {
               </Button>
             </Skeleton>
           </Flex>
-          <Box h="8" />
+          <Box h="4" />
           <Skeleton isLoaded={!isCollectionLoading}>
             {!snapshot || snapshot?.docs.length === 0 ? (
               <Text textColor="white" textAlign="center">
@@ -113,7 +113,7 @@ export default function Dashboard() {
               <VStack
                 overflowY="auto"
                 spacing="4"
-                h="40vh"
+                h="60vh"
                 w="full"
                 align="start"
                 divider={<StackDivider borderColor="gray.200" />}
