@@ -79,11 +79,12 @@ export const CreateLinkDrawer: React.FC<Props> = ({ isOpen, onClose }) => {
                   type="text"
                   border="1px"
                   borderColor="black"
+                  placeholder="No Title"
                   onChange={onTitleChange}
                 />
                 <FormHelperText>
-                  Optional. By default title would be the same as the generated
-                  link !
+                  Optional. By default title would be named &ldquo;No
+                  Title&ldquo;
                 </FormHelperText>
               </FormControl>
               <Box>
@@ -121,7 +122,13 @@ export const CreateLinkDrawer: React.FC<Props> = ({ isOpen, onClose }) => {
                       _disabled={{ opacity: 0.2 }}
                       min={1}
                     >
-                      <NumberInputField border="1px" borderColor="black" />
+                      <NumberInputField
+                        border="1px"
+                        borderTop="4px"
+                        borderRight="4px"
+                        borderColor="black"
+                        _hover={{ opacity: 1 }}
+                      />
                       <NumberInputStepper>
                         <NumberIncrementStepper />
                         <NumberDecrementStepper />
