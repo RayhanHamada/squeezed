@@ -202,7 +202,10 @@ export const useCreateLinkStore = createStore(
         createLinkTitle: '',
         createLinkRefURL: '',
         createLinkExpire: undefined as number | undefined,
+        currentNumberInput: 1,
         isRefURLValid: true,
+        radioState: '1' as '1' | '2',
+        enabled: true,
       },
       (set) => ({
         setCreateLinkTitle: (linkTitle: string) =>
@@ -219,11 +222,26 @@ export const useCreateLinkStore = createStore(
           set(() => ({ isRefURLValid: true, createLinkRefURL: refURL }));
         },
 
-        /**
-         * if linkExpire is empty then no expiration time.
-         */
-        setLinkExpire: (linkExpire?: number) =>
-          set(() => ({ createLinkExpire: linkExpire })),
+        radioOnChange: (val: '1' | '2') =>
+          set(({ currentNumberInput }) => ({
+            radioState: val,
+            createLinkExpire: val === '1' ? undefined : currentNumberInput,
+          })),
+
+        onTitleChange: (e: ChangeEvent<HTMLInputElement>) =>
+          set(() => ({ createLinkTitle: e.target.value })),
+
+        onNumberInputChange: (_e: string, e2: number) =>
+          set(() => ({
+            currentNumberInput: e2,
+            createLinkExpire: e2,
+          })),
+
+        toggleEnabled: (e: ChangeEvent<HTMLInputElement>) => {
+          e.preventDefault();
+          e.target.blur();
+          set((state) => ({ enabled: !state.enabled }));
+        },
       })
     ),
     {
