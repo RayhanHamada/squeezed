@@ -1,4 +1,5 @@
 import { CreateLinkDrawer } from '@/components/CreateLinkDrawer';
+import { EditLinkModal } from '@/components/EditLinkModal';
 import { Navbar } from '@/components/Navbar';
 import { Redirecting } from '@/components/Redirecting';
 import { dayjs } from '@/lib/dayjs';
@@ -35,12 +36,22 @@ export default function Dashboard() {
   const [selectedID, setSelectedID] = useState('');
 
   /**
-   * Create Link Modal disclosure
+   * Create Link drawer disclosure
    */
   const {
     isOpen: isCreateLinkModalOpen,
     onClose: onCreateLinkModalClose,
     onOpen,
+  } = useDisclosure();
+
+  /**
+   * Edit link modal disclosure
+   */
+
+  const {
+    isOpen: isEditOpen,
+    onOpen: onEditOpen,
+    onClose: onEditClose,
   } = useDisclosure();
 
   /**
@@ -118,83 +129,89 @@ export default function Dashboard() {
                 align="start"
                 divider={<StackDivider borderColor="gray.200" />}
               >
-                {snapshot.docs.map((doc) => {
-                  const {
-                    id,
-                    title,
-                    created_at,
-                    uuid_code,
-                    expire_at,
-                    enabled,
-                  } = {
-                    id: doc.ref.id,
-                    ...doc.data(),
-                  } as URLData;
+                {snapshot.docs
+                  .sort((a, b) => b.data().created_at - a.data().created_at)
+                  .map((doc) => {
+                    const {
+                      id,
+                      title,
+                      created_at,
+                      uuid_code,
+                      expire_at,
+                      enabled,
+                    } = {
+                      id: doc.ref.id,
+                      ...doc.data(),
+                    } as URLData;
 
-                  const dateCreatedAt = dayjs
-                    .unix(created_at)
-                    .format('DD/MM/YYYY HH:mm');
+                    const dateCreatedAt = dayjs
+                      .unix(created_at)
+                      .format('DD/MM/YYYY HH:mm');
 
-                  const dateExpiredAt = expire_at
-                    ? dayjs.unix(expire_at).format('DD/MM/YYYY HH:mm')
-                    : undefined;
+                    const dateExpiredAt = expire_at
+                      ? dayjs.unix(expire_at).format('DD/MM/YYYY HH:mm')
+                      : undefined;
 
-                  return (
-                    <Flex
-                      key={id}
-                      w="full"
-                      justifyContent="start"
-                      alignItems="center"
-                      opacity={id === selectedID ? 0.7 : 1}
-                      pr="4"
-                    >
-                      <Box>
-                        <Checkbox colorScheme="green" />
-                      </Box>
-                      <VStack alignItems="start" px="4">
-                        <Text
-                          color="white"
-                          fontWeight="bold"
-                          fontSize="md"
-                          onClick={() => setSelectedID(id!)}
-                          _hover={{
-                            cursor: 'pointer',
-                            textDecor: 'underline',
+                    return (
+                      <Flex
+                        key={id}
+                        w="full"
+                        justifyContent="start"
+                        alignItems="center"
+                        opacity={id === selectedID ? 0.7 : 1}
+                        pr="4"
+                      >
+                        <Box>
+                          <Checkbox colorScheme="green" />
+                        </Box>
+                        <VStack alignItems="start" px="4">
+                          <Text
+                            color="white"
+                            fontWeight="bold"
+                            fontSize="md"
+                            onClick={() => {
+                              // setSelectedID(id!)
+                              onEditOpen();
+                            }}
+                            _hover={{
+                              cursor: 'pointer',
+                              textDecor: 'underline',
+                            }}
+                          >
+                            {title}
+                          </Text>
+                          <Button color="white" variant="link" fontSize="sm">
+                            sqzd.xyz/{uuid_code}
+                          </Button>
+                          <Text color="white" fontSize="xs">
+                            Created at: {dateCreatedAt} <b> | </b>
+                            {dateExpiredAt
+                              ? ` Expired at ${dateExpiredAt}`
+                              : 'Permanent'}
+                          </Text>
+                        </VStack>
+                        <Spacer />
+                        <Text color="white" pr="2">
+                          Enabled
+                        </Text>
+                        <Switch
+                          isChecked={enabled}
+                          onChange={(e) => {
+                            e.preventDefault();
+                            doc.ref.update({
+                              enabled: !enabled,
+                            } as Partial<URLData>);
                           }}
-                        >
-                          {title}
-                        </Text>
-                        <Button color="white" variant="link" fontSize="sm">
-                          sqzd.xyz/{uuid_code}
-                        </Button>
-                        <Text color="white" fontSize="xs">
-                          Created at: {dateCreatedAt} <b> | </b>
-                          {dateExpiredAt
-                            ? ` Expired at ${dateExpiredAt}`
-                            : 'Permanent'}
-                        </Text>
-                      </VStack>
-                      <Spacer />
-                      <Text color="white" pr="2">
-                        Enabled
-                      </Text>
-                      <Switch
-                        isChecked={enabled}
-                        onChange={(e) => {
-                          e.preventDefault();
-                          doc.ref.update({
-                            enabled: !enabled,
-                          } as Partial<URLData>);
-                        }}
-                      ></Switch>
-                    </Flex>
-                  );
-                })}
+                        ></Switch>
+                      </Flex>
+                    );
+                  })}
               </VStack>
             )}
           </Skeleton>
         </Flex>
       </Container>
+      <EditLinkModal isOpen={isEditOpen} onClose={onEditClose} />
     </Container>
   );
 }
