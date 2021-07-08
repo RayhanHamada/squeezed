@@ -3,6 +3,7 @@ import { ChangeEvent, ChangeEventHandler, MouseEventHandler } from 'react';
 import axios from 'redaxios';
 import createStore from 'zustand';
 import { combine, persist } from 'zustand/middleware';
+import { GenerateAuthenticatedUUIDBody } from '../types';
 import { urlRegex } from '../utils';
 
 export const useModalData = createStore(
@@ -206,8 +207,11 @@ export const useCreateLinkStore = createStore(
         isRefURLValid: true,
         radioState: '1' as '1' | '2',
         enabled: true,
+        isFetching: false,
+        isError: false,
+        generatedCode: '',
       },
-      (set) => ({
+      (set, get, api) => ({
         setCreateLinkTitle: (linkTitle: string) =>
           set(() => ({ createLinkTitle: linkTitle })),
 
@@ -241,6 +245,44 @@ export const useCreateLinkStore = createStore(
           e.preventDefault();
           e.target.blur();
           set((state) => ({ enabled: !state.enabled }));
+        },
+
+        fetchUUID: async () => {
+          set(() => ({ isFetching: true }));
+
+          const {
+            createLinkTitle,
+            enabled,
+            createLinkRefURL,
+            createLinkExpire,
+          } = get();
+
+          const { uid } = useUserDataStore.getState();
+
+          await axios
+            .post(`${baseURL}/api/generateAuthenticatedUUID`, {
+              uid,
+              enabled,
+              ref_url: createLinkRefURL,
+              title: createLinkTitle,
+              expire_at: createLinkExpire,
+            } as GenerateAuthenticatedUUIDBody)
+            .then((res) => {
+              const { uuid_code } = res.data as { uuid_code: string };
+
+              set(() => ({ isFetching: false, generatedCode: uuid_code }));
+            })
+            .catch((err) => {
+              if (isDev) {
+                console.log(err);
+              }
+
+              set(() => ({ isFetching: false, isError: true }));
+
+              setTimeout(() => {
+                set(() => ({ isError: false }));
+              }, 1000);
+            });
         },
       })
     ),
