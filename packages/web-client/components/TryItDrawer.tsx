@@ -41,7 +41,7 @@ export const TryItDrawer: React.FC<Props> = ({ isOpen, onClose }) => {
     fetchAnonURL,
     isError,
     isFetching,
-    shortenedURL,
+    uuidCode,
     onTextBoxChange,
     toggleExpanded,
     refURL,
@@ -120,10 +120,10 @@ export const TryItDrawer: React.FC<Props> = ({ isOpen, onClose }) => {
                 <Text textColor="red">Failed fetching data for your url</Text>
               ) : undefined}
 
-              {shortenedURL !== '' ? (
+              {uuidCode !== '' ? (
                 <Flex justifyContent="space-between">
                   <Text onClick={copy} textColor="blue">
-                    {shortenedURL}
+                    sqzd.xyz/{uuidCode}
                   </Text>
                   <Spacer />
                   <IconButton
@@ -134,7 +134,7 @@ export const TryItDrawer: React.FC<Props> = ({ isOpen, onClose }) => {
                   ></IconButton>
                 </Flex>
               ) : undefined}
-              {shortenedURL !== '' ? (
+              {uuidCode !== '' ? (
                 <Text>
                   URL only last for the next 24 hour. Sign In to save your URL
                 </Text>

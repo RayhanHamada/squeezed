@@ -4,8 +4,8 @@ import axios from 'redaxios';
 import createStore from 'zustand';
 import { combine, persist } from 'zustand/middleware';
 import {
-  generateAnonUUIDBody,
-  generateAnonUUIDResponse,
+  GenerateAnonUUIDBody,
+  GenerateAnonUUIDResponse,
   GenerateAuthenticatedUUIDBody,
 } from '../api-typings';
 import { urlRegex } from '../utils';
@@ -42,7 +42,7 @@ export const useTryItStore = createStore(
     combine(
       {
         refURL: '',
-        shortenedURL: '',
+        uuidCode: '',
         isRefURLValid: true,
         isFetching: false,
         isError: false,
@@ -65,13 +65,13 @@ export const useTryItStore = createStore(
           await axios
             .post(`${baseURL}/api/generateAnonUUID`, {
               ref_url: refURL,
-            } as generateAnonUUIDBody)
+            } as GenerateAnonUUIDBody)
             .then(async (res) => {
               set(() => ({ isFetching: false }));
 
-              const { uuid_code } = res.data as generateAnonUUIDResponse;
+              const { uuid_code } = res.data as GenerateAnonUUIDResponse;
 
-              set(() => ({ shortenedURL: `sqzd.xyz/${uuid_code}` }));
+              set(() => ({ uuidCode: uuid_code! }));
             })
             .catch((err) => {
               if (isDev) {

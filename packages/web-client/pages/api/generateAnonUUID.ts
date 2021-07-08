@@ -1,6 +1,6 @@
 import {
-  generateAnonUUIDBody,
-  generateAnonUUIDResponse,
+  GenerateAnonUUIDBody,
+  GenerateAnonUUIDResponse,
 } from '@/lib/api-typings';
 import { dayjs } from '@/lib/dayjs';
 import { admin } from '@/lib/firebase-admin';
@@ -10,9 +10,9 @@ import short from 'short-uuid';
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<generateAnonUUIDResponse>
+  res: NextApiResponse<GenerateAnonUUIDResponse>
 ) {
-  const { ref_url } = req.body as generateAnonUUIDBody;
+  const { ref_url } = req.body as GenerateAnonUUIDBody;
   const generated: string = short.generate();
   const now = dayjs.utc().unix();
   const expire_at = dayjs.utc().add(24, 'hour').unix();
@@ -31,11 +31,11 @@ export default async function handler(
     .then(() => {
       res.status(200).json({
         uuid_code: generated,
-      } as generateAnonUUIDResponse);
+      } as GenerateAnonUUIDResponse);
     })
     .catch(() => {
       res.status(500).json({
         error_msg: 'failed to create url data',
-      } as generateAnonUUIDResponse);
+      } as GenerateAnonUUIDResponse);
     });
 }

@@ -11,11 +11,11 @@ export type GenerateAuthenticatedResponse = {
   uuid_code?: string;
 };
 
-export type generateAnonUUIDBody = {
+export type GenerateAnonUUIDBody = {
   ref_url: string;
 };
 
-export type generateAnonUUIDResponse = {
+export type GenerateAnonUUIDResponse = {
   error_msg?: string;
   uuid_code?: string;
 };

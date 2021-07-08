@@ -8,7 +8,7 @@ export type UserData = {
 export type URLData = {
   id?: string;
   uid?: string;
-  url_name?: string;
+  title: string;
   uuid_code: string;
   ref_url: string;
   enabled: boolean;

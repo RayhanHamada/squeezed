@@ -26,7 +26,7 @@ export default async function handler(
       uid,
       enabled,
       ref_url,
-      url_name: title ?? 'No title',
+      title,
       uuid_code: generated,
       created_at: now,
       last_modified_at: now,
