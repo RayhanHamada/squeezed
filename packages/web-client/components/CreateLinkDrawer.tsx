@@ -104,6 +104,17 @@ export const CreateLinkDrawer: React.FC<Props> = ({ isOpen, onClose }) => {
           <Flex flexDir="column" alignItems="stretch" justifyContent="center">
             <form>
               <Stack spacing="16px">
+                <Button
+                  size="xs"
+                  onClick={toggleExpanded}
+                  variant="outline"
+                  borderTop="4px"
+                  borderRight="4px"
+                  borderColor="black"
+                  w="32"
+                >
+                  {isExpanded ? 'Too big...' : 'More room please...'}
+                </Button>
                 <FormControl isDisabled={isFetching}>
                   <FormLabel>Link Title</FormLabel>
                   <Input
@@ -191,18 +202,6 @@ export const CreateLinkDrawer: React.FC<Props> = ({ isOpen, onClose }) => {
                   </FormLabel>
                 </FormControl>
 
-                <Flex>
-                  <Button
-                    size="xs"
-                    onClick={toggleExpanded}
-                    variant="outline"
-                    borderTop="4px"
-                    borderRight="4px"
-                    borderColor="black"
-                  >
-                    {isExpanded ? 'Too big...' : 'More room please...'}
-                  </Button>
-                </Flex>
                 <Button
                   size="md"
                   variant="outline"
