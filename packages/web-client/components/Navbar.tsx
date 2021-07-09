@@ -1,7 +1,6 @@
 import { fb } from '@/lib/firebase-client';
 import { useURLDataStore, useUserDataStore } from '@/lib/store';
 import {
-  Box,
   Button,
   Center,
   Flex,
@@ -11,7 +10,6 @@ import {
   MenuList,
   Spacer,
   Spinner,
-  Text,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/dist/client/router';
 import React, { MouseEventHandler } from 'react';
@@ -83,10 +81,6 @@ export const Navbar: React.FC = (_props) => {
       <Center>
         <Flex alignItems="flex-end">
           <SqueezedLogo fontSize="2xl" />
-          <Box w="2" />
-          <Text textColor="white" fontSize="x-small">
-            Shorten your URL within a second !
-          </Text>
         </Flex>
       </Center>
       <Spacer />
