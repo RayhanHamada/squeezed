@@ -11,7 +11,9 @@ import {
   Button,
   Checkbox,
   Container,
+  Divider,
   Flex,
+  IconButton,
   Skeleton,
   Spacer,
   StackDivider,
@@ -26,7 +28,7 @@ import Head from 'next/head';
 import { useEffect, useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useCollection } from 'react-firebase-hooks/firestore';
-import { FaPlus } from 'react-icons/fa';
+import { FaEdit, FaPlus, FaTrash } from 'react-icons/fa';
 
 export default function Dashboard() {
   const router = useRouter();
@@ -114,7 +116,49 @@ export default function Dashboard() {
             </Skeleton>
           </Flex>
           <Box h="4" />
-          <Skeleton isLoaded={!isCollectionLoading}>
+
+          {/* untuk nama kolom */}
+          <Flex w="full" justifyContent="start" alignItems="center" pr="4">
+            <Checkbox colorScheme="green" />
+
+            <Text textColor="white" px="4" fontWeight="bold" fontSize="lg">
+              Links
+            </Text>
+            <Spacer />
+            <Text
+              textColor="white"
+              mx="4"
+              fontWeight="bold"
+              fontSize="lg"
+              display={{ base: 'none', md: 'block', lg: 'block' }}
+            >
+              Enabled
+            </Text>
+            <Text
+              textColor="white"
+              mx={{ base: '8', md: '4', lg: '4' }}
+              fontWeight="bold"
+              fontSize="lg"
+            >
+              Edit
+            </Text>
+            <Text
+              textColor="white"
+              mx="4"
+              fontWeight="bold"
+              fontSize="lg"
+              display={{ base: 'none', md: 'block', lg: 'block' }}
+            >
+              Delete
+            </Text>
+          </Flex>
+          <Divider my="2" />
+          {/* isi kolom */}
+          <Skeleton
+            isLoaded={!isCollectionLoading}
+            borderBottom="1px"
+            borderColor="white"
+          >
             {!snapshot || snapshot?.docs.length === 0 ? (
               <Text textColor="white" textAlign="center">
                 Seems empty. Create your link by clicking the white button on
@@ -124,7 +168,7 @@ export default function Dashboard() {
               <VStack
                 overflowY="auto"
                 spacing="4"
-                h="60vh"
+                h="50vh"
                 w="full"
                 align="start"
                 divider={<StackDivider borderColor="gray.200" />}
@@ -169,10 +213,6 @@ export default function Dashboard() {
                             color="white"
                             fontWeight="bold"
                             fontSize="md"
-                            onClick={() => {
-                              // setSelectedID(id!)
-                              onEditOpen();
-                            }}
                             _hover={{
                               cursor: 'pointer',
                               textDecor: 'underline',
@@ -191,10 +231,10 @@ export default function Dashboard() {
                           </Text>
                         </VStack>
                         <Spacer />
-                        <Text color="white" pr="2">
-                          Enabled
-                        </Text>
+
                         <Switch
+                          mx="4"
+                          colorScheme="green"
                           isChecked={enabled}
                           onChange={(e) => {
                             e.preventDefault();
@@ -202,7 +242,35 @@ export default function Dashboard() {
                               enabled: !enabled,
                             } as Partial<URLData>);
                           }}
+                          display={{
+                            base: 'none',
+                            md: 'inherit',
+                            lg: 'inherit',
+                          }}
                         ></Switch>
+                        <IconButton
+                          mx="4"
+                          aria-label="edit"
+                          icon={<FaEdit color="white" />}
+                          bgColor="transparent"
+                          _hover={{ bgColor: 'transparent', opacity: 0.7 }}
+                          onClick={() => {
+                            // setSelectedID(id!)
+                            onEditOpen();
+                          }}
+                        />
+                        <IconButton
+                          mx="4"
+                          aria-label="delete"
+                          icon={<FaTrash color="red" />}
+                          bgColor="transparent"
+                          _hover={{ bgColor: 'transparent', opacity: 0.7 }}
+                          display={{
+                            base: 'none',
+                            md: 'inherit',
+                            lg: 'inherit',
+                          }}
+                        />
                       </Flex>
                     );
                   })}
