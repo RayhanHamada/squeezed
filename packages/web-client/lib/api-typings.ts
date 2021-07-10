@@ -1,3 +1,7 @@
+export type CreateUserResponse = {
+  error_msg?: string;
+};
+
 export type GenerateAuthenticatedUUIDBody = {
   uid: string;
   title?: string;

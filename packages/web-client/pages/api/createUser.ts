@@ -1,13 +1,13 @@
 import { isDev } from '@/global';
+import { CreateUserResponse } from '@/lib/api-typings';
 import { admin } from '@/lib/firebase-admin';
 import { UserData } from '@/lib/model-types';
 import { NextApiHandler } from 'next';
 
-type Data = {
-  error_msg?: string;
-};
-
-const createUser: NextApiHandler<Data> = async function (req, res) {
+const createUser: NextApiHandler<CreateUserResponse> = async function (
+  req,
+  res
+) {
   const { username, email, password } = req.body;
 
   await admin
