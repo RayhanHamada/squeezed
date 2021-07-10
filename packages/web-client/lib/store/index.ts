@@ -1,5 +1,5 @@
 import { baseURL, isDev } from '@/global';
-import { ChangeEvent, ChangeEventHandler, MouseEventHandler } from 'react';
+import { ChangeEventHandler, MouseEventHandler } from 'react';
 import axios from 'redaxios';
 import createStore from 'zustand';
 import { combine, persist } from 'zustand/middleware';
@@ -204,83 +204,31 @@ export const useCreateLinkStore = createStore(
   persist(
     combine(
       {
-        createLinkTitle: '',
-        createLinkRefURL: '',
-        createLinkExpire: undefined as number | undefined,
-        currentNumberInput: 1,
-        isRefURLValid: true,
-        radioState: '1' as '1' | '2',
-        enabled: true,
-        isFetching: false,
-        isError: false,
         generatedCode: '',
       },
-      (set, get, api) => ({
-        setCreateLinkTitle: (linkTitle: string) =>
-          set(() => ({ createLinkTitle: linkTitle })),
-
+      (set) => ({
         reset: () =>
           set(() => ({
-            createLinkTitle: '',
-            createLinkRefURL: '',
-            createLinkExpire: undefined,
-            isRefURLValid: true,
-            radioState: '1',
-            enabled: true,
             generatedCode: '',
           })),
 
-        onTextBoxChange: (e: ChangeEvent<HTMLTextAreaElement>) => {
-          const refURL = e.target.value;
+        setGeneratedCode: (code: string) => set({ generatedCode: code }),
 
-          if (!urlRegex.test(refURL)) {
-            set(() => ({ isRefURLValid: false }));
-            return;
-          }
-
-          set(() => ({ isRefURLValid: true, createLinkRefURL: refURL }));
-        },
-
-        radioOnChange: (val: '1' | '2') =>
-          set(({ currentNumberInput }) => ({
-            radioState: val,
-            createLinkExpire: val === '1' ? undefined : currentNumberInput,
-          })),
-
-        onTitleChange: (e: ChangeEvent<HTMLInputElement>) =>
-          set(() => ({ createLinkTitle: e.target.value })),
-
-        onNumberInputChange: (_e: string, e2: number) =>
-          set(() => ({
-            currentNumberInput: e2,
-            createLinkExpire: e2,
-          })),
-
-        toggleEnabled: (e: ChangeEvent<HTMLInputElement>) => {
-          e.preventDefault();
-          e.target.blur();
-          set((state) => ({ enabled: !state.enabled }));
-        },
-
-        fetchUUID: async () => {
-          set(() => ({ isFetching: true }));
-
-          const {
-            createLinkTitle,
-            enabled,
-            createLinkRefURL,
-            createLinkExpire,
-          } = get();
-
+        fetchUUID: async (
+          refURL: string,
+          enabled: boolean,
+          title?: string,
+          expireAt?: number
+        ) => {
           const { uid } = useUserDataStore.getState();
 
           await axios
             .post(`${baseURL}/api/generateAuthenticatedUUID`, {
               uid,
               enabled,
-              ref_url: createLinkRefURL,
-              title: createLinkTitle,
-              expire_at: createLinkExpire,
+              ref_url: refURL,
+              title: title || title === '' ? 'No Title' : title,
+              expire_at: expireAt,
             } as GenerateAuthenticatedUUIDBody)
             .then((res) => {
               const { uuid_code } =
@@ -292,15 +240,7 @@ export const useCreateLinkStore = createStore(
               if (isDev) {
                 console.log(err);
               }
-
-              set(() => ({ isError: true }));
-
-              setTimeout(() => {
-                set(() => ({ isError: false }));
-              }, 1000);
             });
-
-          set(() => ({ isFetching: false }));
         },
       })
     ),

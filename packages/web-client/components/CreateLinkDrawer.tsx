@@ -1,4 +1,5 @@
 import { useCreateLinkStore } from '@/lib/store';
+import { urlRegex } from '@/lib/utils';
 import {
   Box,
   Button,
@@ -13,6 +14,7 @@ import {
   FormControl,
   FormHelperText,
   FormLabel,
+  HStack,
   IconButton,
   Input,
   NumberDecrementStepper,
@@ -29,33 +31,58 @@ import {
   Text,
   Textarea,
   useToast,
+  VStack,
 } from '@chakra-ui/react';
+import { yupResolver } from '@hookform/resolvers/yup';
 import React, { createRef, MouseEvent, useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { FaClipboard } from 'react-icons/fa';
+import * as yup from 'yup';
 
 type Props = {
   isOpen: boolean;
   onClose(): void;
 };
 
+type FormField = {
+  title: string;
+  refURL: string;
+  expireTime?: number;
+  enabled: boolean;
+};
+
+const schema = yup.object().shape({
+  title: yup.string().optional().default('No Title'),
+  refURL: yup.string().matches(urlRegex, { message: 'Invalid URL' }).required(),
+  expireTime: yup.number().min(1).optional(),
+  enabled: yup.bool().default(true),
+});
+
 export const CreateLinkDrawer: React.FC<Props> = ({ isOpen, onClose }) => {
   const firstField = createRef<HTMLInputElement>();
+  const [isPermanent, setIsPermanent] = useState(true);
+
+  const { reset, fetchUUID, generatedCode } = useCreateLinkStore();
+
   const {
-    isRefURLValid,
-    createLinkRefURL,
-    isFetching,
-    currentNumberInput,
-    radioState,
-    enabled,
-    generatedCode,
-    toggleEnabled,
-    radioOnChange,
-    onTitleChange,
-    onNumberInputChange,
-    onTextBoxChange,
-    fetchUUID,
-    reset,
-  } = useCreateLinkStore();
+    handleSubmit,
+    register,
+    formState: { errors, isSubmitting },
+    getValues,
+    reset: resetFormState,
+  } = useForm<FormField>({
+    resolver: yupResolver(schema),
+    reValidateMode: 'onChange',
+  });
+
+  const onSubmit = handleSubmit(
+    async ({ title, refURL, enabled, expireTime }) => {
+      await fetchUUID(refURL, enabled, title, expireTime);
+    },
+    (errors) => {
+      console.log(errors);
+    }
+  );
 
   /**
    * expand size drawer
@@ -68,7 +95,7 @@ export const CreateLinkDrawer: React.FC<Props> = ({ isOpen, onClose }) => {
   };
 
   const toast = useToast({
-    description: `${createLinkRefURL} copied !`,
+    description: `Link copied !`,
     title: 'Copied !',
     status: 'info',
     duration: 2000,
@@ -76,13 +103,19 @@ export const CreateLinkDrawer: React.FC<Props> = ({ isOpen, onClose }) => {
   });
 
   const copy = () => {
-    navigator.clipboard.writeText(createLinkRefURL);
+    navigator.clipboard.writeText(getValues().refURL);
     toast();
   };
 
   const onDrawerClose = () => {
-    reset();
     onClose();
+    resetForm();
+    setIsPermanent(true);
+  };
+
+  const resetForm = () => {
+    reset();
+    resetFormState();
   };
 
   return (
@@ -102,7 +135,7 @@ export const CreateLinkDrawer: React.FC<Props> = ({ isOpen, onClose }) => {
 
         <DrawerBody maxH="full">
           <Flex flexDir="column" alignItems="stretch" justifyContent="center">
-            <form>
+            <form onSubmit={onSubmit}>
               <Stack spacing="16px">
                 <Button
                   size="xs"
@@ -115,91 +148,74 @@ export const CreateLinkDrawer: React.FC<Props> = ({ isOpen, onClose }) => {
                 >
                   {isExpanded ? 'Too big...' : 'More room please...'}
                 </Button>
-                <FormControl isDisabled={isFetching}>
+                <FormControl isDisabled={isSubmitting}>
                   <FormLabel>Link Title</FormLabel>
                   <Input
                     type="text"
                     border="1px"
                     borderColor="black"
                     placeholder="No Title"
-                    onChange={onTitleChange}
-                    ref={firstField}
+                    {...register('title')}
                   />
                   <FormHelperText>
                     Optional. By default title would be named &ldquo;No
                     Title&ldquo;
                   </FormHelperText>
                 </FormControl>
-                <FormControl isDisabled={isFetching}>
+                <FormControl isDisabled={isSubmitting}>
                   <Box>
                     <Textarea
                       placeholder="Paste Your Loooooooooooong link here"
                       h="32"
-                      onChange={onTextBoxChange}
                       border="1px"
                       borderTop="4px"
                       borderRight="4px"
                       borderColor="black"
+                      {...register('refURL')}
                     />
                     <Text textColor="red" fontSize="sm">
-                      {isRefURLValid ? '' : 'URL seems to be wrong ;('}
+                      {/* {isRefURLValid ? '' : 'URL seems to be wrong ;('} */}
+                      {errors.refURL?.message}
                     </Text>
                   </Box>
                 </FormControl>
 
-                <FormControl isDisabled={isFetching}>
+                <FormControl>
+                  <FormLabel>Is Permanent ?</FormLabel>
                   <RadioGroup
-                    onChange={radioOnChange}
-                    onClick={(e) => e.currentTarget.blur()}
-                    value={radioState}
+                    value={isPermanent ? 'permanent' : 'expires_in'}
+                    onChange={() => {
+                      console.log(!isPermanent);
+                      setIsPermanent(!isPermanent);
+                    }}
+                    colorScheme="green"
                   >
-                    <Stack direction="column">
-                      <Radio value="1" onClick={(e) => e.currentTarget.blur()}>
-                        Permanent
-                      </Radio>
-                      <Radio value="2" onClick={(e) => e.currentTarget.blur()}>
-                        Expires in:{' '}
-                      </Radio>
-                      <Flex alignItems="center">
-                        <NumberInput
-                          defaultValue={currentNumberInput}
-                          onChange={onNumberInputChange}
-                          isDisabled={radioState === '1' || isFetching}
-                          _disabled={{ opacity: 0.2 }}
-                          min={1}
-                        >
-                          <NumberInputField
-                            border="1px"
-                            borderTop="4px"
-                            borderRight="4px"
-                            borderColor="black"
-                            _hover={{ opacity: 1 }}
-                          />
-                          <NumberInputStepper>
-                            <NumberIncrementStepper />
-                            <NumberDecrementStepper />
-                          </NumberInputStepper>
-                        </NumberInput>
-                        <Box w="4" />
-                        <Text>Hour(s)</Text>
-                      </Flex>
-                    </Stack>
+                    <VStack alignItems="start">
+                      <Radio value="permanent">Permanent</Radio>
+                      <Radio value="expires_in">Expires in</Radio>
+                    </VStack>
                   </RadioGroup>
                 </FormControl>
 
-                <FormControl
-                  display="flex"
-                  alignItems="center"
-                  isDisabled={isFetching}
-                >
-                  <Switch
-                    isChecked={enabled}
-                    onChange={toggleEnabled}
-                    isDisabled={isFetching}
-                  />
-                  <FormLabel mb="0" ml="2">
-                    Enabled
-                  </FormLabel>
+                <FormControl isDisabled={isPermanent}>
+                  <NumberInput defaultValue={1} min={1}>
+                    <NumberInputField {...register('expireTime')} />
+                    <NumberInputStepper>
+                      <NumberIncrementStepper />
+                      <NumberDecrementStepper />
+                    </NumberInputStepper>
+                  </NumberInput>
+                </FormControl>
+
+                <FormControl>
+                  <HStack alignItems="center">
+                    <Switch
+                      colorScheme="green"
+                      {...register('enabled')}
+                      defaultChecked
+                    />
+                    <FormLabel>Enabled</FormLabel>
+                  </HStack>
                 </FormControl>
 
                 <Button
@@ -207,17 +223,16 @@ export const CreateLinkDrawer: React.FC<Props> = ({ isOpen, onClose }) => {
                   variant="outline"
                   border="2px"
                   borderColor="black"
-                  onClick={fetchUUID}
+                  // onClick={fetchUUID}
+                  type="submit"
                   borderTop="8px"
                   borderRight="8px"
-                  isDisabled={
-                    !isRefURLValid || createLinkRefURL === '' || isFetching
-                  }
+                  isDisabled={isSubmitting}
                 >
                   Generate !
                 </Button>
                 <Text>Your link are: </Text>
-                {isFetching ? (
+                {isSubmitting ? (
                   <Center>
                     <Spinner color="black" />
                   </Center>
@@ -245,7 +260,7 @@ export const CreateLinkDrawer: React.FC<Props> = ({ isOpen, onClose }) => {
                   borderRight="8px"
                   w="25%"
                   type="reset"
-                  onClick={reset}
+                  onClick={resetForm}
                 >
                   Reset
                 </Button>
