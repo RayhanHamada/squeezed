@@ -1,3 +1,4 @@
+import { BulkActionMenu } from '@/components/BulkActionMenu';
 import { CreateLinkDrawer } from '@/components/CreateLinkDrawer';
 import { DeleteAlert } from '@/components/DeleteAlert';
 import { EditLinkModal } from '@/components/EditLinkModal';
@@ -6,7 +7,7 @@ import { Redirecting } from '@/components/Redirecting';
 import { dayjs } from '@/lib/dayjs';
 import { fb } from '@/lib/firebase-client';
 import { URLData } from '@/lib/model-types';
-import { useDeleteStore, useUserDataStore } from '@/lib/store';
+import { useDeleteStore, useURLDataStore, useUserDataStore } from '@/lib/store';
 import {
   Box,
   Button,
@@ -33,10 +34,21 @@ import { FaEdit, FaPlus, FaTrash } from 'react-icons/fa';
 
 export default function Dashboard() {
   const router = useRouter();
+
   const { uid } = useUserDataStore();
   const [user, isAuthLoading] = useAuthState(fb.auth());
 
   const [selectedID, setSelectedID] = useState('');
+
+  // const [isAllChecked, setIsAllChecked] = useState(false);
+  // const toggleAllChecked = (e: ChangeEvent<HTMLInputElement>) => {
+  //   if (e.target.checked) {
+  //     setIsAllChecked(true);
+  //     return;
+  //   }
+
+  //   setIsAllChecked(false);
+  // };
 
   /**
    * Create Link drawer disclosure
@@ -71,6 +83,11 @@ export default function Dashboard() {
     setItemID(itemID);
     onDeleteOpen();
   };
+
+  /**
+   * untuk bulk operation (delete, enable, dan disable)
+   */
+  const { addDataID, removeDataID } = useURLDataStore();
 
   /**
    * ambil semua url_data dari firestore
@@ -127,6 +144,9 @@ export default function Dashboard() {
             </Text>
 
             <Spacer />
+            <Box mx="4">
+              <BulkActionMenu />
+            </Box>
             <Skeleton isLoaded={!isAuthLoading}>
               <Button rightIcon={<FaPlus />} onClick={onOpen}>
                 Create Link
@@ -137,9 +157,14 @@ export default function Dashboard() {
 
           {/* untuk nama kolom */}
           <Flex w="full" justifyContent="start" alignItems="center" pr="4">
-            <Checkbox colorScheme="green" />
+            {/* <Checkbox
+              colorScheme="green"
+              display={{ base: 'none', md: 'inline' }}
+              isChecked={isAllChecked}
+              onChange={toggleAllChecked}
+            /> */}
 
-            <Text textColor="white" px="4" fontWeight="bold" fontSize="lg">
+            <Text textColor="white" px="8" fontWeight="bold" fontSize="lg">
               Links
             </Text>
             <Spacer />
@@ -224,7 +249,18 @@ export default function Dashboard() {
                         pr="4"
                       >
                         <Box>
-                          <Checkbox colorScheme="green" />
+                          <Checkbox
+                            colorScheme="green"
+                            display={{ base: 'none', md: 'inline' }}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                addDataID(doc.id);
+                                return;
+                              }
+
+                              removeDataID(doc.id);
+                            }}
+                          />
                         </Box>
                         <VStack alignItems="start" px="4">
                           <Text
