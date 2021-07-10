@@ -1,11 +1,12 @@
 import { CreateLinkDrawer } from '@/components/CreateLinkDrawer';
+import { DeleteAlert } from '@/components/DeleteAlert';
 import { EditLinkModal } from '@/components/EditLinkModal';
 import { Navbar } from '@/components/Navbar';
 import { Redirecting } from '@/components/Redirecting';
 import { dayjs } from '@/lib/dayjs';
 import { fb } from '@/lib/firebase-client';
 import { URLData } from '@/lib/model-types';
-import { useUserDataStore } from '@/lib/store';
+import { useDeleteStore, useUserDataStore } from '@/lib/store';
 import {
   Box,
   Button,
@@ -49,12 +50,27 @@ export default function Dashboard() {
   /**
    * Edit link modal disclosure
    */
-
   const {
     isOpen: isEditOpen,
     onOpen: onEditOpen,
     onClose: onEditClose,
   } = useDisclosure();
+
+  /**
+   * delete item disclosure
+   */
+  const {
+    isOpen: isDeleteOpen,
+    onOpen: onDeleteOpen,
+    onClose: onDeleteClose,
+  } = useDisclosure();
+
+  const { setItemID } = useDeleteStore();
+
+  const singleDelete = (itemID: string) => {
+    setItemID(itemID);
+    onDeleteOpen();
+  };
 
   /**
    * ambil semua url_data dari firestore
@@ -101,6 +117,8 @@ export default function Dashboard() {
         isOpen={isCreateLinkModalOpen}
         onClose={onCreateLinkModalClose}
       />
+
+      <DeleteAlert isOpen={isDeleteOpen} onClose={onDeleteClose} />
       <Container maxW="full" pt="8">
         <Flex flexDir="column" px="4" h="80vh" maxH="full">
           <Flex>
@@ -269,6 +287,10 @@ export default function Dashboard() {
                             base: 'none',
                             md: 'inherit',
                             lg: 'inherit',
+                          }}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            singleDelete(doc.id);
                           }}
                         />
                       </Flex>

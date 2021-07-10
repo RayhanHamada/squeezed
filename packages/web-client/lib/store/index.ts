@@ -7,7 +7,7 @@ import {
   GenerateAnonUUIDBody,
   GenerateAnonUUIDResponse,
   GenerateAuthenticatedUUIDBody,
-  GenerateAuthenticatedUUIDResponse,
+  GenerateAuthenticatedUUIDResponse
 } from '../api-typings';
 import { urlRegex } from '../utils';
 
@@ -188,12 +188,25 @@ export const useURLDataStore = createStore(
   persist(
     combine(
       {
-        selectedURLDataID: '',
+        selectedSingleURLDataID: '',
+        selectedURLDataIDs: [] as string[],
       },
       (set) => ({
-        setSelectedURLDataID: (id: string) =>
-          set(() => ({ selectedURLDataID: id })),
-        reset: () => set(() => ({ selectedURLDataID: '' })),
+        setSelectedSingleURLDataID: (id: string) =>
+          set(() => ({ selectedSingleURLDataID: id })),
+        reset: () => set(() => ({ selectedSingleURLDataID: '' })),
+
+        addDataID: (id: string) =>
+          set(({ selectedURLDataIDs }) => ({
+            selectedURLDataIDs: [...selectedURLDataIDs, id],
+          })),
+          
+        removeDataID: (id: string) =>
+          set(({ selectedURLDataIDs }) => ({
+            selectedURLDataIDs: [...selectedURLDataIDs].filter(
+              (selID) => selID !== id
+            ),
+          })),
       })
     ),
     { name: 'url-data-store', getStorage: () => sessionStorage }
@@ -248,5 +261,16 @@ export const useCreateLinkStore = createStore(
       name: 'create-link-drawer',
       getStorage: () => sessionStorage,
     }
+  )
+);
+
+export const useDeleteStore = createStore(
+  combine(
+    {
+      itemID: '',
+    },
+    (set) => ({
+      setItemID: (itemID: string) => set({ itemID }),
+    })
   )
 );
