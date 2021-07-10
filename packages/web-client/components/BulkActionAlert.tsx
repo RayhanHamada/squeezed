@@ -29,6 +29,12 @@ export const BulkActionAlert: React.FC<Props> = ({ isOpen, onClose }) => {
     onClose();
   };
 
+  const cleanup = () => {
+    setIsLoading(false);
+    onThisClose();
+    reset();
+  };
+
   const enableLinks = async () => {
     selectedURLDataIDs.forEach(async (docID, idx) => {
       await fb
@@ -39,11 +45,7 @@ export const BulkActionAlert: React.FC<Props> = ({ isOpen, onClose }) => {
           enabled: true,
         })
         .then(() => {
-          if (idx === selectedURLDataIDs.length - 1) {
-            setIsLoading(false);
-            onThisClose();
-            reset();
-          }
+          if (idx === selectedURLDataIDs.length - 1) cleanup();
         });
     });
   };
@@ -58,11 +60,7 @@ export const BulkActionAlert: React.FC<Props> = ({ isOpen, onClose }) => {
           enabled: false,
         })
         .then(() => {
-          if (idx === selectedURLDataIDs.length - 1) {
-            setIsLoading(false);
-            onThisClose();
-            reset();
-          }
+          if (idx === selectedURLDataIDs.length - 1) cleanup();
         });
     });
   };
@@ -75,11 +73,7 @@ export const BulkActionAlert: React.FC<Props> = ({ isOpen, onClose }) => {
         .doc(docID)
         .delete()
         .then(() => {
-          if (idx === selectedURLDataIDs.length - 1) {
-            setIsLoading(false);
-            onThisClose();
-            reset();
-          }
+          if (idx === selectedURLDataIDs.length - 1) cleanup();
         });
     });
   };
