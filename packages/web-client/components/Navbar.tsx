@@ -31,7 +31,7 @@ type Menu = {
 export const Navbar: React.FC = (_props) => {
   const [user, loading, error] = useAuthState(fb.auth());
   const resetUserDataStore = useUserDataStore((sel) => sel.reset);
-  const resetURLDataStore = useURLDataStore((sel) => sel.reset);
+  const resetURLDataStore = useURLDataStore((sel) => sel.resetURLDataStore);
 
   const router = useRouter();
 

@@ -7,7 +7,7 @@ import {
   GenerateAnonUUIDBody,
   GenerateAnonUUIDResponse,
   GenerateAuthenticatedUUIDBody,
-  GenerateAuthenticatedUUIDResponse
+  GenerateAuthenticatedUUIDResponse,
 } from '../api-typings';
 import { urlRegex } from '../utils';
 
@@ -194,13 +194,14 @@ export const useURLDataStore = createStore(
       (set) => ({
         setSelectedSingleURLDataID: (id: string) =>
           set(() => ({ selectedSingleURLDataID: id })),
-        reset: () => set(() => ({ selectedSingleURLDataID: '' })),
+        resetURLDataStore: () =>
+          set(() => ({ selectedSingleURLDataID: '', selectedURLDataIDs: [] })),
 
         addDataID: (id: string) =>
           set(({ selectedURLDataIDs }) => ({
             selectedURLDataIDs: [...selectedURLDataIDs, id],
           })),
-          
+
         removeDataID: (id: string) =>
           set(({ selectedURLDataIDs }) => ({
             selectedURLDataIDs: [...selectedURLDataIDs].filter(
@@ -271,6 +272,18 @@ export const useDeleteStore = createStore(
     },
     (set) => ({
       setItemID: (itemID: string) => set({ itemID }),
+    })
+  )
+);
+
+export const useBulkActionStore = createStore(
+  combine(
+    {
+      operation: undefined as 'delete' | 'enable' | 'disable' | undefined,
+    },
+    (set) => ({
+      setBulkOperation: (operation?: 'delete' | 'enable' | 'disable') =>
+        set({ operation }),
     })
   )
 );

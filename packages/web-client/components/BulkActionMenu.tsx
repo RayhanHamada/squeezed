@@ -1,6 +1,6 @@
-import { useURLDataStore } from '@/lib/store';
+import { useBulkActionStore, useURLDataStore } from '@/lib/store';
 import { Button, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react';
-import React from 'react';
+import React, { MouseEvent } from 'react';
 import {
   FaArrowCircleDown,
   FaArrowCircleUp,
@@ -8,14 +8,32 @@ import {
   FaTrash,
 } from 'react-icons/fa';
 
-export const BulkActionMenu: React.FC = (props) => {
+type Props = {
+  onAlertOpen(): void;
+};
+
+export const BulkActionMenu: React.FC<Props> = ({ onAlertOpen }) => {
   const { selectedURLDataIDs } = useURLDataStore();
 
-  const enableLinks = async () => {};
+  const { setBulkOperation } = useBulkActionStore();
 
-  const disableLinks = async () => {};
+  const enableLinks = async (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    setBulkOperation('enable');
+    onAlertOpen();
+  };
 
-  const removeLinks = async () => {};
+  const disableLinks = async (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    setBulkOperation('disable');
+    onAlertOpen();
+  };
+
+  const removeLinks = async (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    setBulkOperation('delete');
+    onAlertOpen();
+  };
 
   return (
     <Menu>

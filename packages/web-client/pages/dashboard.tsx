@@ -1,3 +1,4 @@
+import { BulkActionAlert } from '@/components/BulkActionAlert';
 import { BulkActionMenu } from '@/components/BulkActionMenu';
 import { CreateLinkDrawer } from '@/components/CreateLinkDrawer';
 import { DeleteAlert } from '@/components/DeleteAlert';
@@ -77,6 +78,15 @@ export default function Dashboard() {
     onClose: onDeleteClose,
   } = useDisclosure();
 
+  /**
+   * bulk operation disclosure
+   */
+  const {
+    isOpen: isBulkActionAlertOpen,
+    onClose: onBulkActionAlertClose,
+    onOpen: onBulkActionAlertOpen,
+  } = useDisclosure();
+
   const { setItemID } = useDeleteStore();
 
   const singleDelete = (itemID: string) => {
@@ -136,6 +146,10 @@ export default function Dashboard() {
       />
 
       <DeleteAlert isOpen={isDeleteOpen} onClose={onDeleteClose} />
+      <BulkActionAlert
+        isOpen={isBulkActionAlertOpen}
+        onClose={onBulkActionAlertClose}
+      />
       <Container maxW="full" pt="8">
         <Flex flexDir="column" px="4" h="80vh" maxH="full">
           <Flex>
@@ -145,7 +159,7 @@ export default function Dashboard() {
 
             <Spacer />
             <Box mx="4">
-              <BulkActionMenu />
+              <BulkActionMenu onAlertOpen={onBulkActionAlertOpen} />
             </Box>
             <Skeleton isLoaded={!isAuthLoading}>
               <Button rightIcon={<FaPlus />} onClick={onOpen}>
