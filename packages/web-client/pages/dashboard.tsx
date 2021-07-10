@@ -36,8 +36,28 @@ import { FaEdit, FaPlus, FaTrash } from 'react-icons/fa';
 export default function Dashboard() {
   const router = useRouter();
 
-  const { uid } = useUserDataStore();
   const [user, isAuthLoading] = useAuthState(fb.auth());
+  const { uid, setUID } = useUserDataStore();
+
+  /**
+   * jika tidak ada user ataupun tidak loading, maka redirect ke home
+   */
+  useEffect(() => {
+    let timeout: any;
+    if (!(user || isAuthLoading)) {
+      timeout = setTimeout(() => {
+        router.replace('/');
+      }, 1000);
+    }
+
+    if (user) {
+      setUID(user.uid);
+    }
+
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [user, isAuthLoading, router, setUID]);
 
   const [selectedID, setSelectedID] = useState('');
 
@@ -102,25 +122,9 @@ export default function Dashboard() {
   /**
    * ambil semua url_data dari firestore
    */
-  const [snapshot, isCollectionLoading, error] = useCollection(
+  const [snapshot, isCollectionLoading] = useCollection(
     fb.firestore().collection('url_data').where('uid', '==', uid)
   );
-
-  /**
-   * jika tidak ada user ataupun tidak loading, maka redirect ke home
-   */
-  useEffect(() => {
-    let timeout: any;
-    if (!(user || isAuthLoading)) {
-      timeout = setTimeout(() => {
-        router.replace('/');
-      }, 1000);
-    }
-
-    return () => {
-      clearTimeout(timeout);
-    };
-  }, [user, isAuthLoading, router]);
 
   if (!(user || isAuthLoading)) {
     return <Redirecting />;
