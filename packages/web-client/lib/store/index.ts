@@ -241,7 +241,7 @@ export const useCreateLinkStore = createStore(
               uid,
               enabled,
               ref_url: refURL,
-              title: title || title === '' ? 'No Title' : title,
+              title: !title || title === '' ? 'No Title' : title,
               expire_at: expireAt,
             } as GenerateAuthenticatedUUIDBody)
             .then((res) => {
