@@ -8,7 +8,12 @@ import { Redirecting } from '@/components/Redirecting';
 import { dayjs } from '@/lib/dayjs';
 import { fb } from '@/lib/firebase-client';
 import { URLData } from '@/lib/model-types';
-import { useDeleteStore, useURLDataStore, useUserDataStore } from '@/lib/store';
+import {
+  useDeleteStore,
+  useEditLinkStore,
+  useURLDataStore,
+  useUserDataStore,
+} from '@/lib/store';
 import {
   Box,
   Button,
@@ -61,16 +66,6 @@ export default function Dashboard() {
 
   const [selectedID, setSelectedID] = useState('');
 
-  // const [isAllChecked, setIsAllChecked] = useState(false);
-  // const toggleAllChecked = (e: ChangeEvent<HTMLInputElement>) => {
-  //   if (e.target.checked) {
-  //     setIsAllChecked(true);
-  //     return;
-  //   }
-
-  //   setIsAllChecked(false);
-  // };
-
   /**
    * Create Link drawer disclosure
    */
@@ -107,6 +102,16 @@ export default function Dashboard() {
     onOpen: onBulkActionAlertOpen,
   } = useDisclosure();
 
+  const { currentURLID, setCurrentURLID } = useEditLinkStore();
+
+  const onClickEdit = (id: string) => {
+    setCurrentURLID(id);
+    onEditOpen();
+  };
+
+  /**
+   * untuk delete per item
+   */
   const { setItemID } = useDeleteStore();
 
   const singleDelete = (itemID: string) => {
@@ -175,13 +180,6 @@ export default function Dashboard() {
 
           {/* untuk nama kolom */}
           <Flex w="full" justifyContent="start" alignItems="center" pr="4">
-            {/* <Checkbox
-              colorScheme="green"
-              display={{ base: 'none', md: 'inline' }}
-              isChecked={isAllChecked}
-              onChange={toggleAllChecked}
-            /> */}
-
             <Text textColor="white" px="8" fontWeight="bold" fontSize="lg">
               Links
             </Text>
@@ -326,9 +324,9 @@ export default function Dashboard() {
                           icon={<FaEdit color="white" />}
                           bgColor="transparent"
                           _hover={{ bgColor: 'transparent', opacity: 0.7 }}
-                          onClick={() => {
-                            // setSelectedID(id!)
-                            onEditOpen();
+                          onClick={(e) => {
+                            e.preventDefault();
+                            onClickEdit(doc.id);
                           }}
                         />
                         <IconButton

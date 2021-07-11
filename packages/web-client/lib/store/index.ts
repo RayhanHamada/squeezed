@@ -2,7 +2,7 @@ import { baseURL, isDev } from '@/global';
 import { ChangeEventHandler, MouseEventHandler } from 'react';
 import axios from 'redaxios';
 import createStore from 'zustand';
-import { combine, persist } from 'zustand/middleware';
+import { combine, devtools, persist } from 'zustand/middleware';
 import {
   GenerateAnonUUIDBody,
   GenerateAnonUUIDResponse,
@@ -285,5 +285,20 @@ export const useBulkActionStore = createStore(
       setBulkOperation: (operation?: 'delete' | 'enable' | 'disable') =>
         set({ operation }),
     })
+  )
+);
+
+export const useEditLinkStore = createStore(
+  devtools(
+    combine(
+      {
+        currentURLID: '',
+      },
+      (set) => ({
+        setCurrentURLID: (id: string) => set({ currentURLID: id }),
+        reset: () => set({ currentURLID: '' }),
+      })
+    ),
+    'edit-link-store'
   )
 );

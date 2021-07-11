@@ -180,7 +180,7 @@ export const CreateLinkDrawer: React.FC<Props> = ({ isOpen, onClose }) => {
                   </Box>
                 </FormControl>
 
-                <FormControl>
+                <FormControl isDisabled={isSubmitting}>
                   <FormLabel>Is Permanent ?</FormLabel>
                   <RadioGroup
                     value={isPermanent ? 'permanent' : 'expires_in'}
@@ -198,16 +198,19 @@ export const CreateLinkDrawer: React.FC<Props> = ({ isOpen, onClose }) => {
                 </FormControl>
 
                 <FormControl isDisabled={isPermanent}>
-                  <NumberInput defaultValue={1} min={1}>
-                    <NumberInputField {...register('expireTime')} />
-                    <NumberInputStepper>
-                      <NumberIncrementStepper />
-                      <NumberDecrementStepper />
-                    </NumberInputStepper>
-                  </NumberInput>
+                  <HStack>
+                    <NumberInput defaultValue={1} min={1}>
+                      <NumberInputField {...register('expireTime')} />
+                      <NumberInputStepper>
+                        <NumberIncrementStepper />
+                        <NumberDecrementStepper />
+                      </NumberInputStepper>
+                    </NumberInput>
+                    <Text>Hour(s)</Text>
+                  </HStack>
                 </FormControl>
 
-                <FormControl>
+                <FormControl isDisabled={isSubmitting}>
                   <HStack alignItems="center">
                     <Switch
                       colorScheme="green"
