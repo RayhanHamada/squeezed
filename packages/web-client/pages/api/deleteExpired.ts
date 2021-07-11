@@ -13,7 +13,7 @@ export default async function Handler(
   const query = admin
     .firestore()
     .collection('url_data')
-    .where('expire_at', '>=', now);
+    .where('expire_at', '<=', now);
 
   await query
     .get()
