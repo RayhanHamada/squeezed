@@ -23,3 +23,12 @@ export type GenerateAnonUUIDResponse = {
   error_msg?: string;
   uuid_code?: string;
 };
+
+export type DeleteExpiredBody = {
+  much: number;
+};
+
+export type DeleteExpiredResponse = {
+  error_msg?: string;
+  much: number;
+};
