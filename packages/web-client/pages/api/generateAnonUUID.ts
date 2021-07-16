@@ -5,15 +5,15 @@ import {
 import { dayjs } from '@/lib/dayjs';
 import { admin } from '@/lib/firebase-admin';
 import { URLData } from '@/lib/model-types';
+import { nanoid } from 'nanoid';
 import type { NextApiRequest, NextApiResponse } from 'next';
-import short from 'short-uuid';
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<GenerateAnonUUIDResponse>
 ) {
   const { ref_url } = req.body as GenerateAnonUUIDBody;
-  const generated: string = short.generate();
+  const generated = nanoid(16);
   const now = dayjs.utc().unix();
   const expire_at = dayjs.utc().add(24, 'hour').unix();
 
