@@ -103,7 +103,7 @@ export const CreateLinkDrawer: React.FC<Props> = ({ isOpen, onClose }) => {
   });
 
   const copy = () => {
-    navigator.clipboard.writeText(getValues().refURL);
+    navigator.clipboard.writeText(`sqzd.xyz/${generatedCode}`);
     toast();
   };
 

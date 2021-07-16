@@ -50,7 +50,7 @@ export const TryItDrawer: React.FC<Props> = ({ isOpen, onClose }) => {
   } = useTryItStore();
 
   const copy = () => {
-    navigator.clipboard.writeText(refURL);
+    navigator.clipboard.writeText(`sqzd.xyz/${uuidCode}`);
     toast();
   };
 
