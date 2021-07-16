@@ -64,7 +64,7 @@ export const useTryItStore = createStore(
           const { refURL } = get();
 
           await axios
-            .post(`${baseURL}/api/generateAnonUUID`, {
+            .post(`${baseURL ?? ''}/api/generateAnonUUID`, {
               ref_url: refURL,
             } as GenerateAnonUUIDBody)
             .then(async (res) => {
@@ -154,7 +154,7 @@ export const useSignUpStore = createStore(
         set(() => ({ isLoading: true, loadingMsg: 'Please wait...' }));
 
         await axios
-          .post(`${baseURL}/api/createUser`, {
+          .post(`${baseURL ?? ''}/api/createUser`, {
             username,
             email,
             password,
@@ -237,7 +237,7 @@ export const useCreateLinkStore = createStore(
           const { uid } = useUserDataStore.getState();
 
           await axios
-            .post(`${baseURL}/api/generateAuthenticatedUUID`, {
+            .post(`${baseURL ?? ''}/api/generateAuthenticatedUUID`, {
               uid,
               enabled,
               ref_url: refURL,
