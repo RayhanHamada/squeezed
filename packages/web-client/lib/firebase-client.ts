@@ -1,9 +1,6 @@
+import { firebaseClientConfig } from '@/global';
 import firebase from 'firebase/app';
 
-var firebaseConfig = JSON.parse(
-  process.env.NEXT_PUBLIC_FIREBASE_CONFIG as string
-);
-
 export const fb = !firebase.apps.length
-  ? firebase.initializeApp(firebaseConfig)
+  ? firebase.initializeApp(firebaseClientConfig)
   : firebase.app();

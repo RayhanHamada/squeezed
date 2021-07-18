@@ -1,9 +1,17 @@
+import {
+  firebaseAdminClientEmail,
+  firebaseAdminPrivateKey,
+  firebaseAdminProjectID,
+} from '@/global';
 import admin from 'firebase-admin';
-import serviceAccount from './squeezed-admin-sdk.json';
 
 if (!admin.apps.length) {
   admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount as any),
+    credential: admin.credential.cert({
+      clientEmail: firebaseAdminClientEmail,
+      privateKey: firebaseAdminPrivateKey,
+      projectId: firebaseAdminProjectID,
+    }),
   });
 }
 
