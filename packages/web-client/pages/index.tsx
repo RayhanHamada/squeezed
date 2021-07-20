@@ -13,8 +13,9 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react';
+import { useRouter } from 'next/dist/client/router';
 import Head from 'next/head';
-import { useEffect } from 'react';
+import { MouseEvent, useEffect } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import {
   AiOutlineCloud,
@@ -38,6 +39,12 @@ const whyReasons = [
 ];
 
 export default function Home() {
+  const router = useRouter();
+  const toDashboard = (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    router.push('/dashboard');
+  };
+
   /**
    * for sign in modal
    */
@@ -121,7 +128,6 @@ export default function Home() {
       <TryItDrawer isOpen={isDrawerOpen} onClose={onDrawerClose} />
 
       {/* landing page body */}
-
       <Text textAlign="center" fontSize="4xl" color="white" mt="40">
         Shorten your URL <b>within seconds !</b>
       </Text>
@@ -141,7 +147,16 @@ export default function Home() {
           >
             Try Free Now
           </Button>
-        ) : undefined}
+        ) : (
+          <Button
+            alignSelf="center"
+            size="lg"
+            _hover={{ opacity: 0.7 }}
+            onClick={toDashboard}
+          >
+            Go To Dashboard
+          </Button>
+        )}
       </Center>
 
       {/* Why Section */}
