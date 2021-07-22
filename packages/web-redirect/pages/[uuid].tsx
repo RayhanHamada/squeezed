@@ -19,7 +19,9 @@ export default function Redirect({ refURL }: Props) {
   // }, [refURL]);
 
   if (refURL) {
-    const buildURL = refURL.startsWith('http') ? refURL : `https://${refURL}`;
+    const buildURL = /^https?\:\/\//.test(refURL)
+      ? refURL
+      : `https://${refURL}`;
 
     const Redirect = redirect(buildURL, { statusCode: 301 });
     return (
@@ -53,19 +55,28 @@ type Params = {
 export const getServerSideProps: GetServerSideProps<Props, Params> = async (
   ctx
 ) => {
-  const refURL =
-    (await fb
-      .firestore()
-      .collection('url_data')
-      .where('uuid_code', '==', ctx.params?.uuid)
-      .get()
-      .then((col) => {
-        return col?.docs[0]?.data()?.ref_url;
-      })) ?? null;
+  const refURL = await fb
+    .firestore()
+    .collection('url_data')
+    .where('uuid_code', '==', ctx.params?.uuid)
+    .get()
+    .then((col) => {
+      const data = col?.docs[0]?.data();
+
+      if (data) {
+        if (!data.enabled) {
+          return null;
+        }
+
+        return data.ref_url as string;
+      }
+
+      return null;
+    });
 
   return {
     props: {
-      refURL: refURL ?? null,
+      refURL,
     },
   };
 };
