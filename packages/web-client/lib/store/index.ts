@@ -8,6 +8,7 @@ import {
   GenerateAnonUUIDResponse,
   GenerateAuthenticatedUUIDBody,
   GenerateAuthenticatedUUIDResponse,
+  UpdateUserBody,
 } from '../api-typings';
 import { urlRegex } from '../utils';
 
@@ -117,7 +118,7 @@ export const useUserDataStore = createStore(
         uid: '',
         email: '',
       },
-      (set) => ({
+      (set, get) => ({
         setUsername: (username: string) => set(() => ({ username })),
         setUID: (uid: string) => set(() => ({ uid })),
         updateAll: (all: { [K in 'username' | 'uid' | 'email']?: string }) =>
@@ -126,6 +127,23 @@ export const useUserDataStore = createStore(
             email: all.email ?? state.email,
             uid: all.uid ?? state.uid,
           })),
+
+        updateUsername: async (username: string) => {
+          const uid = get().uid;
+          await axios
+            .post(`${baseURL}/api/updateUser`, {
+              username,
+              uid,
+            } as UpdateUserBody)
+            .then(() => {
+              set(() => ({ username }));
+            })
+            .catch((err) => {
+              if (isDev) {
+                console.error(err);
+              }
+            });
+        },
 
         reset: () =>
           set(() => ({

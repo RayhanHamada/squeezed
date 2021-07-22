@@ -32,3 +32,10 @@ export type DeleteExpiredResponse = {
   error_msg?: string;
   much: number;
 };
+
+export type UpdateUserBody = {
+  uid: string;
+  username: string;
+};
+
+export type UpdateUserResponse = {};

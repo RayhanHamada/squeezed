@@ -32,6 +32,7 @@ export const Navbar: React.FC = (_props) => {
   const [user, loading, error] = useAuthState(fb.auth());
   const resetUserDataStore = useUserDataStore((sel) => sel.reset);
   const resetURLDataStore = useURLDataStore((sel) => sel.resetURLDataStore);
+  const username = useUserDataStore((sel) => sel.username);
 
   const router = useRouter();
 
@@ -49,7 +50,7 @@ export const Navbar: React.FC = (_props) => {
       Icon: FaCog,
       onClick: (e) => {
         e.preventDefault();
-        router.push('/settings');
+        router.push('/setting');
       },
     },
     {
@@ -102,7 +103,7 @@ export const Navbar: React.FC = (_props) => {
                   _hover={{ opacity: 0.7 }}
                   _active={{ bgColor: 'black' }}
                 >
-                  {user?.displayName ?? 'John Doe'}
+                  {username ?? 'John Doe'}
                 </MenuButton>
                 <MenuList bgColor="white" textColor="black">
                   {menus.map(({ text, Icon, onClick }, idx) => (
