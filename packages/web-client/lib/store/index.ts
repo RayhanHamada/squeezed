@@ -1,16 +1,16 @@
 import { baseURL, isDev } from '@/global';
-import { ChangeEventHandler, MouseEventHandler } from 'react';
-import axios from 'redaxios';
-import createStore from 'zustand';
-import { combine, devtools, persist } from 'zustand/middleware';
 import {
   GenerateAnonUUIDBody,
   GenerateAnonUUIDResponse,
   GenerateAuthenticatedUUIDBody,
   GenerateAuthenticatedUUIDResponse,
   UpdateUserBody,
-} from '../api-typings';
-import { urlRegex } from '../utils';
+} from '@/lib/api-typings';
+import { urlRegex } from '@/lib/utils';
+import { ChangeEventHandler, MouseEventHandler } from 'react';
+import axios from 'redaxios';
+import createStore from 'zustand';
+import { combine, devtools, persist } from 'zustand/middleware';
 
 export const useModalData = createStore(
   persist(
