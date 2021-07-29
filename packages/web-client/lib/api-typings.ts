@@ -33,9 +33,9 @@ export type DeleteExpiredResponse = {
   much: number;
 };
 
-export type UpdateUserBody = {
+export type UpdateUsernameBody = {
   uid: string;
   username: string;
 };
 
-export type UpdateUserResponse = {};
+export type UpdateUsernameResponse = {};

@@ -4,7 +4,7 @@ import {
   GenerateAnonUUIDResponse,
   GenerateAuthenticatedUUIDBody,
   GenerateAuthenticatedUUIDResponse,
-  UpdateUserBody,
+  UpdateUsernameBody,
 } from '@/lib/api-typings';
 import { urlRegex } from '@/lib/utils';
 import { ChangeEventHandler, MouseEventHandler } from 'react';
@@ -131,10 +131,10 @@ export const useUserDataStore = createStore(
         updateUsername: async (username: string) => {
           const uid = get().uid;
           await axios
-            .post(`${baseURL}/api/updateUser`, {
+            .post(`${baseURL}/api/updateUsername`, {
               username,
               uid,
-            } as UpdateUserBody)
+            } as UpdateUsernameBody)
             .then(() => {
               set(() => ({ username }));
             })

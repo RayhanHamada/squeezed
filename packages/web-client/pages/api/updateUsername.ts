@@ -1,14 +1,14 @@
 import { isDev } from '@/global';
-import { UpdateUserBody, UpdateUserResponse } from '@/lib/api-typings';
+import { UpdateUsernameBody, UpdateUsernameResponse } from '@/lib/api-typings';
 import { admin } from '@/lib/firebase-admin';
 import { UserData } from '@/lib/model-types';
 import { NextApiHandler } from 'next';
 
-const updateUser: NextApiHandler<UpdateUserResponse> = async function (
+const updateUsername: NextApiHandler<UpdateUsernameResponse> = async function (
   req,
   res
 ) {
-  const { username, uid } = req.body as UpdateUserBody;
+  const { username, uid } = req.body as UpdateUsernameBody;
 
   await admin
     .auth()
@@ -44,4 +44,4 @@ const updateUser: NextApiHandler<UpdateUserResponse> = async function (
     });
 };
 
-export default updateUser;
+export default updateUsername;
