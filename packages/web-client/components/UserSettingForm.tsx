@@ -28,9 +28,7 @@ export const UserSettingForm = () => {
   const {
     handleSubmit,
     formState: { isSubmitting, errors },
-    getValues: getFormValues,
     register,
-    setValue,
   } = useForm<FormField>({
     resolver: yupResolver(formSchema),
   });
