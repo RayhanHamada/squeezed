@@ -5,6 +5,7 @@ import {
   FormControl,
   FormErrorMessage,
   FormLabel,
+  HStack,
   Input,
   VStack,
 } from '@chakra-ui/react';
@@ -52,7 +53,7 @@ export const UserSettingForm = () => {
     <form onSubmit={onSubmit}>
       <VStack spacing="4" alignItems="self-start">
         <FormControl
-          w={{ base: 'full', md: '50%', lg: '25%' }}
+          w={{ base: 'full', md: '50%', lg: '30%' }}
           isDisabled={isSubmitting}
           isInvalid={Boolean(errors.username)}
         >
@@ -67,7 +68,7 @@ export const UserSettingForm = () => {
             {errors.username?.message}
           </FormErrorMessage>
         </FormControl>
-        <FormControl w={{ base: 'full', md: '50%', lg: '25%' }} isReadOnly>
+        <FormControl w={{ base: 'full', md: '50%', lg: '30%' }} isReadOnly>
           <FormLabel textColor="white">Email</FormLabel>
           <Input
             type="text"
@@ -77,7 +78,7 @@ export const UserSettingForm = () => {
           />
           <FormErrorMessage></FormErrorMessage>
         </FormControl>
-        <FormControl w={{ base: 'full', md: '50%', lg: '25%' }} isReadOnly>
+        <FormControl w={{ base: 'full', md: '50%', lg: '30%' }} isReadOnly>
           <FormLabel textColor="white">UID</FormLabel>
           <Input
             type="text"
@@ -88,9 +89,35 @@ export const UserSettingForm = () => {
           <FormErrorMessage></FormErrorMessage>
         </FormControl>
 
-        <Button type="submit" isLoading={isSubmitting}>
+        <Button
+          type="submit"
+          w={{ base: 'full', md: '50%', lg: '30%' }}
+          isLoading={isSubmitting}
+          _hover={{ opacity: 0.7 }}
+        >
           Save
         </Button>
+        <HStack w={{ base: 'full', md: '50%', lg: '30%' }}>
+          <Button
+            isLoading={isSubmitting}
+            variant="outline"
+            textColor="white"
+            w="full"
+            _hover={{ bgColor: 'transparent', opacity: 0.7 }}
+          >
+            Change Password
+          </Button>
+          <Button
+            isLoading={isSubmitting}
+            variant="outline"
+            colorScheme="red"
+            textColor="red"
+            w="full"
+            _hover={{ bgColor: 'transparent', opacity: 0.7 }}
+          >
+            Delete Account
+          </Button>
+        </HStack>
       </VStack>
     </form>
   );
