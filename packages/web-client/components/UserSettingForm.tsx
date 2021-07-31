@@ -1,6 +1,8 @@
+import { PasswordChangeModal } from '@/components/PasswordChangeModal';
 import { fb } from '@/lib/firebase-client';
 import { useUserDataStore } from '@/lib/store';
 import {
+  Box,
   Button,
   FormControl,
   FormErrorMessage,
@@ -50,75 +52,72 @@ export const UserSettingForm = () => {
   }
 
   return (
-    <form onSubmit={onSubmit}>
-      <VStack spacing="4" alignItems="self-start">
-        <FormControl
-          w={{ base: 'full', md: '50%', lg: '30%' }}
-          isDisabled={isSubmitting}
-          isInvalid={Boolean(errors.username)}
-        >
-          <FormLabel textColor="white">Username</FormLabel>
-          <Input
-            type="text"
-            textColor="white"
-            defaultValue={user?.displayName ?? ''}
-            {...register('username')}
-          />
-          <FormErrorMessage textColor="red">
-            {errors.username?.message}
-          </FormErrorMessage>
-        </FormControl>
-        <FormControl w={{ base: 'full', md: '50%', lg: '30%' }} isReadOnly>
-          <FormLabel textColor="white">Email</FormLabel>
-          <Input
-            type="text"
-            textColor="white"
-            value={user?.email ?? ''}
-            isDisabled
-          />
-          <FormErrorMessage></FormErrorMessage>
-        </FormControl>
-        <FormControl w={{ base: 'full', md: '50%', lg: '30%' }} isReadOnly>
-          <FormLabel textColor="white">UID</FormLabel>
-          <Input
-            type="text"
-            textColor="white"
-            value={user?.uid ?? ''}
-            isDisabled
-          />
-          <FormErrorMessage></FormErrorMessage>
-        </FormControl>
+    <>
+      <form onSubmit={onSubmit}>
+        <VStack spacing="4" alignItems="self-start">
+          <FormControl
+            w={{ base: 'full', md: '50%', lg: '30%' }}
+            isDisabled={isSubmitting}
+            isInvalid={Boolean(errors.username)}
+          >
+            <FormLabel textColor="white">Username</FormLabel>
+            <Input
+              type="text"
+              textColor="white"
+              defaultValue={user?.displayName ?? ''}
+              {...register('username')}
+            />
+            <FormErrorMessage textColor="red">
+              {errors.username?.message}
+            </FormErrorMessage>
+          </FormControl>
+          <FormControl w={{ base: 'full', md: '50%', lg: '30%' }} isReadOnly>
+            <FormLabel textColor="white">Email</FormLabel>
+            <Input
+              type="text"
+              textColor="white"
+              value={user?.email ?? ''}
+              isDisabled
+            />
+            <FormErrorMessage></FormErrorMessage>
+          </FormControl>
+          <FormControl w={{ base: 'full', md: '50%', lg: '30%' }} isReadOnly>
+            <FormLabel textColor="white">UID</FormLabel>
+            <Input
+              type="text"
+              textColor="white"
+              value={user?.uid ?? ''}
+              isDisabled
+            />
+            <FormErrorMessage></FormErrorMessage>
+          </FormControl>
 
+          <Button
+            type="submit"
+            w={{ base: 'full', md: '50%', lg: '30%' }}
+            isLoading={isSubmitting}
+            _hover={{ opacity: 0.7 }}
+            disabled={isSubmitting}
+          >
+            Save
+          </Button>
+        </VStack>
+      </form>
+      <Box h="4" />
+      <HStack w={{ base: 'full', md: '50%', lg: '30%' }}>
+        <PasswordChangeModal isDisabled={isSubmitting} />
         <Button
-          type="submit"
-          w={{ base: 'full', md: '50%', lg: '30%' }}
           isLoading={isSubmitting}
-          _hover={{ opacity: 0.7 }}
+          variant="outline"
+          colorScheme="red"
+          textColor="red"
+          w="full"
+          _hover={{ bgColor: 'transparent', opacity: 0.7 }}
+          disabled={isSubmitting}
         >
-          Save
+          Delete Account
         </Button>
-        <HStack w={{ base: 'full', md: '50%', lg: '30%' }}>
-          <Button
-            isLoading={isSubmitting}
-            variant="outline"
-            textColor="white"
-            w="full"
-            _hover={{ bgColor: 'transparent', opacity: 0.7 }}
-          >
-            Change Password
-          </Button>
-          <Button
-            isLoading={isSubmitting}
-            variant="outline"
-            colorScheme="red"
-            textColor="red"
-            w="full"
-            _hover={{ bgColor: 'transparent', opacity: 0.7 }}
-          >
-            Delete Account
-          </Button>
-        </HStack>
-      </VStack>
-    </form>
+      </HStack>
+    </>
   );
 };
