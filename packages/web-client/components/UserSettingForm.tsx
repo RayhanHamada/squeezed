@@ -7,7 +7,6 @@ import {
   FormControl,
   FormErrorMessage,
   FormLabel,
-  HStack,
   Input,
   VStack,
 } from '@chakra-ui/react';
@@ -101,23 +100,10 @@ export const UserSettingForm = () => {
           >
             Save
           </Button>
+          <PasswordChangeModal isDisabled={isSubmitting} />
         </VStack>
       </form>
       <Box h="4" />
-      <HStack w={{ base: 'full', md: '50%', lg: '30%' }}>
-        <PasswordChangeModal isDisabled={isSubmitting} />
-        <Button
-          isLoading={isSubmitting}
-          variant="outline"
-          colorScheme="red"
-          textColor="red"
-          w="full"
-          _hover={{ bgColor: 'transparent', opacity: 0.7 }}
-          disabled={isSubmitting}
-        >
-          Delete Account
-        </Button>
-      </HStack>
     </>
   );
 };
