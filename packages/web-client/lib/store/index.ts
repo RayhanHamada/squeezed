@@ -6,12 +6,12 @@ import {
   GenerateAuthenticatedUUIDResponse,
   UpdateUsernameBody,
 } from '@/lib/api-typings';
+import { fb } from '@/lib/firebase-client';
 import { urlRegex } from '@/lib/utils';
 import { ChangeEventHandler, MouseEventHandler } from 'react';
 import axios from 'redaxios';
 import createStore from 'zustand';
 import { combine, devtools, persist } from 'zustand/middleware';
-import { fb } from '../firebase-client';
 
 export const useModalData = createStore(
   persist(
