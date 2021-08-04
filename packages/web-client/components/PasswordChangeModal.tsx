@@ -70,7 +70,7 @@ export const PasswordChangeModal: React.FC<Props> = ({ isDisabled }: Props) => {
       <Button
         variant="outline"
         textColor="white"
-        w={{ base: 'full', md: '50%', lg: '30%' }}
+        w="full"
         _hover={{ bgColor: 'transparent', opacity: 0.7 }}
         onClick={onOpen}
         disabled={isDisabled}

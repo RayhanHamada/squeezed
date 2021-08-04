@@ -100,10 +100,11 @@ export const UserSettingForm = () => {
           >
             Save
           </Button>
-          <PasswordChangeModal isDisabled={isSubmitting} />
+          <Box w={{ base: 'full', md: '50%', lg: '30%' }}>
+            <PasswordChangeModal isDisabled={isSubmitting} />
+          </Box>
         </VStack>
       </form>
-      <Box h="4" />
     </>
   );
 };
