@@ -11,6 +11,7 @@ import { ChangeEventHandler, MouseEventHandler } from 'react';
 import axios from 'redaxios';
 import createStore from 'zustand';
 import { combine, devtools, persist } from 'zustand/middleware';
+import { fb } from '../firebase-client';
 
 export const useModalData = createStore(
   persist(
@@ -318,5 +319,45 @@ export const useEditLinkStore = createStore(
       })
     ),
     'edit-link-store'
+  )
+);
+
+export const usePasswordChangeStore = createStore(
+  devtools(
+    combine(
+      {
+        resetRequestEnabled: true,
+      },
+      (set) => ({
+        disableSendResetCodeTemporary() {
+          set({ resetRequestEnabled: false });
+
+          const time = 30000;
+
+          setTimeout(() => {
+            set({ resetRequestEnabled: true });
+          }, time);
+        },
+
+        async sendPasswordChangeRequest() {
+          const { email } = useUserDataStore.getState();
+          let success = false;
+          await fb
+            .auth()
+            .sendPasswordResetEmail(email)
+            .then(() => {
+              success = true;
+            })
+            .catch((err) => {
+              if (isDev) {
+                console.error(err);
+              }
+              success = false;
+            });
+
+          return success;
+        },
+      })
+    )
   )
 );
