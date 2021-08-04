@@ -1,8 +1,23 @@
 import { UserSettingForm } from '@/components/UserSettingForm';
-import { Box, Container, Divider, Text } from '@chakra-ui/react';
-import React from 'react';
+import {
+  Box,
+  Button,
+  Container,
+  Divider,
+  HStack,
+  Text,
+} from '@chakra-ui/react';
+import { useRouter } from 'next/dist/client/router';
+import React, { MouseEventHandler } from 'react';
+import { AiOutlineArrowLeft } from 'react-icons/ai';
 
 export default function Setting() {
+  const router = useRouter();
+
+  const onClickBack: MouseEventHandler<HTMLButtonElement> = (e) => {
+    e.preventDefault();
+    router.back();
+  };
   return (
     <Container
       maxW="full"
@@ -12,6 +27,19 @@ export default function Setting() {
       //   marginX="0"
       bgColor="black"
     >
+      <HStack>
+        <Button
+          leftIcon={<AiOutlineArrowLeft />}
+          bgColor="black"
+          textColor="white"
+          variant="solid"
+          _hover={{ opacity: 0.7 }}
+          onClick={onClickBack}
+        >
+          Back
+        </Button>
+      </HStack>
+      <Box h="8" />
       <Text textColor="white" fontSize="2xl">
         User Setting
       </Text>
