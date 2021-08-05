@@ -31,8 +31,8 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { GetServerSideProps } from 'next';
-import { useRouter } from 'next/dist/client/router';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useCollection } from 'react-firebase-hooks/firestore';
