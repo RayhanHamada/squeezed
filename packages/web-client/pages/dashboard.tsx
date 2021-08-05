@@ -21,13 +21,16 @@ import {
   Container,
   Divider,
   Flex,
+  HStack,
   IconButton,
   Skeleton,
   Spacer,
   StackDivider,
   Switch,
   Text,
+  Tooltip,
   useDisclosure,
+  useToast,
   VStack,
 } from '@chakra-ui/react';
 import { GetServerSideProps } from 'next';
@@ -36,6 +39,7 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useCollection } from 'react-firebase-hooks/firestore';
+import { AiFillCopy } from 'react-icons/ai';
 import { FaEdit, FaPlus, FaTrash } from 'react-icons/fa';
 
 export default function Dashboard() {
@@ -130,6 +134,21 @@ export default function Dashboard() {
   const [snapshot, isCollectionLoading] = useCollection(
     fb.firestore().collection('url_data').where('uid', '==', uid)
   );
+
+  const copyToast = useToast({
+    title: 'Copied !',
+    status: 'success',
+    variant: 'solid',
+    duration: 2000,
+    position: 'bottom',
+  });
+
+  const copyLinkToClipboard = (link: string) => {
+    navigator.clipboard.writeText(link);
+    copyToast({
+      description: `${link} copied !`,
+    });
+  };
 
   if (!(user || isAuthLoading)) {
     return <Redirecting />;
@@ -247,6 +266,8 @@ export default function Dashboard() {
                       ...doc.data(),
                     } as URLData;
 
+                    const constructedURL = `sqzd.xyz/${uuid_code}`;
+
                     const dateCreatedAt = dayjs
                       .unix(created_at)
                       .format('DD/MM/YYYY HH:mm');
@@ -290,9 +311,28 @@ export default function Dashboard() {
                           >
                             {title}
                           </Text>
-                          <Button color="white" variant="link" fontSize="sm">
-                            sqzd.xyz/{uuid_code}
-                          </Button>
+                          <HStack>
+                            <Button color="white" variant="link" fontSize="sm">
+                              {constructedURL}
+                            </Button>
+                            <Tooltip
+                              label="click to copy"
+                              aria-label="click to copy"
+                              placement="top"
+                            >
+                              <IconButton
+                                aria-label="copy link"
+                                icon={<AiFillCopy color="white" />}
+                                size="sm"
+                                bgColor="transparent"
+                                _hover={{ opacity: 0.7 }}
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  copyLinkToClipboard(constructedURL);
+                                }}
+                              />
+                            </Tooltip>
+                          </HStack>
                           <Text color="white" fontSize="xs">
                             Created at: {dateCreatedAt} <b> | </b>
                             {dateExpiredAt
