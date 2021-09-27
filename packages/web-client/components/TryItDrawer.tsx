@@ -65,7 +65,7 @@ export const TryItDrawer: React.FC<Props> = ({ isOpen, onClose }) => {
       <DrawerContent>
         <DrawerCloseButton border="1px" />
         <DrawerHeader borderBottomWidth="1px" borderBottomColor="black">
-          Try it <b>Free</b>
+          Try It <b>Now</b>
         </DrawerHeader>
 
         <DrawerBody maxH="full">

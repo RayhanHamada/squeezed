@@ -145,7 +145,7 @@ export default function Home() {
             _hover={{ opacity: 0.7 }}
             onClick={onDrawerOpen}
           >
-            Try Free Now
+            Try It&nbsp;<b>Now</b>
           </Button>
         ) : (
           <Button
