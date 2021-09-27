@@ -77,18 +77,19 @@ export const EditLinkModal: React.FC<Props> = ({ isOpen, onClose }) => {
     async ({ refURL, title }) => {
       if (isDev) {
         console.log({ refURL, title });
-
-        fb.firestore()
-          .collection('url_data')
-          .doc(currentURLID)
-          .update({
-            title: title,
-            ref_url: refURL,
-          } as Partial<URLData>)
-          .then(() => {
-            onThisClose();
-          });
       }
+
+      await fb
+        .firestore()
+        .collection('url_data')
+        .doc(currentURLID)
+        .update({
+          title: title,
+          ref_url: refURL,
+        } as Partial<URLData>)
+        .then(() => {
+          onThisClose();
+        });
     },
     (errors) => {
       if (isDev) {
