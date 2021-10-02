@@ -1,4 +1,6 @@
 import { fb } from '@/lib/firebase-client';
+import type { SignInSchema } from '@/lib/formResolvers';
+import { signInResolver as resolver } from '@/lib/formResolvers';
 import {
   Box,
   Button,
@@ -20,7 +22,6 @@ import {
   Spinner,
   Text,
 } from '@chakra-ui/react';
-import { yupResolver } from '@hookform/resolvers/yup';
 import { MouseEventHandler, useState } from 'react';
 import { useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth';
 import { useForm } from 'react-hook-form';
@@ -30,17 +31,6 @@ import {
   AiOutlineLock,
   AiOutlineMail,
 } from 'react-icons/ai';
-import * as yup from 'yup';
-
-type FormFieldValue = {
-  email: string;
-  password: string;
-};
-
-const formFieldSchema = yup.object().shape({
-  email: yup.string().email().required('Email required'),
-  password: yup.string().required('Password required'),
-});
 
 type Props = {
   isOpen: boolean;
@@ -56,8 +46,8 @@ export const SignInModal: React.FC<Props> = ({ isOpen, onClose }) => {
     formState: { errors, isValid, isSubmitting },
     register,
     handleSubmit,
-  } = useForm<FormFieldValue>({
-    resolver: yupResolver(formFieldSchema),
+  } = useForm<SignInSchema>({
+    resolver,
   });
 
   const handleShowPass: MouseEventHandler<HTMLButtonElement> = (e) => {

@@ -1,3 +1,5 @@
+import type { SignUpSchema } from '@/lib/formResolvers';
+import { signUpResolver as resolver } from '@/lib/formResolvers';
 import { useSignUpStore } from '@/lib/store';
 import {
   Box,
@@ -20,7 +22,6 @@ import {
   Text,
   useToast,
 } from '@chakra-ui/react';
-import { yupResolver } from '@hookform/resolvers/yup';
 import { MouseEventHandler, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import {
@@ -29,24 +30,6 @@ import {
   AiOutlineLock,
   AiOutlineMail,
 } from 'react-icons/ai';
-import * as yup from 'yup';
-
-type FormFieldValue = {
-  username: string;
-  email: string;
-  password: string;
-  passwordConfirmation: string;
-};
-
-const formFieldSchema = yup.object().shape({
-  username: yup.string().required('Username is required'),
-  email: yup.string().email().required('Email required'),
-  password: yup.string().min(8).required('Password required'),
-  passwordConfirmation: yup
-    .string()
-    .min(8)
-    .required('Password Confirmation required'),
-});
 
 type Props = {
   isOpen: boolean;
@@ -71,8 +54,8 @@ export const SignUpModal: React.FC<Props> = ({ isOpen, onClose }) => {
     setError,
     reset,
     setValue,
-  } = useForm<FormFieldValue>({
-    resolver: yupResolver(formFieldSchema),
+  } = useForm<SignUpSchema>({
+    resolver,
   });
 
   const { goSignUp, isLoading, loadingMsg, isError } = useSignUpStore();
