@@ -1,9 +1,7 @@
 import { Navbar } from '@/components/Navbar';
-import { SignInModal } from '@/components/SignInModal';
-import { SignUpModal } from '@/components/SignUpModal';
 import { TryItDrawer } from '@/components/TryItDrawer';
 import { fb } from '@/lib/firebase-client';
-import { useModalData, useUserDataStore } from '@/lib/store';
+import { useUserDataStore } from '@/lib/store';
 import {
   Button,
   Center,
@@ -46,24 +44,6 @@ export default function Home() {
   };
 
   /**
-   * for sign in modal
-   */
-  const {
-    isOpen: isSignInOpen,
-    onClose: onSignInClose,
-    onOpen: onSignInOpen,
-  } = useDisclosure();
-
-  /**
-   * for sign up modal
-   */
-  const {
-    isOpen: isSignUpOpen,
-    onClose: onSignUpClose,
-    onOpen: onSignUpOpen,
-  } = useDisclosure();
-
-  /**
    * for try it drawer
    */
   const {
@@ -72,27 +52,14 @@ export default function Home() {
     onOpen: onDrawerOpen,
   } = useDisclosure();
 
-  const { setSignInOnOpen, setSignUpOnOpen } = useModalData();
-
   const [user, loading] = useAuthState(fb.auth());
   const { updateAll } = useUserDataStore();
-
-  /**
-   * register callback ke state zustand
-   */
-  useEffect(() => {
-    setSignInOnOpen(onSignInOpen);
-    setSignUpOnOpen(onSignUpOpen);
-  }, [setSignInOnOpen, setSignUpOnOpen, onSignInOpen, onSignUpOpen]);
 
   useEffect(() => {
     /**
      * tutup modal sign in ataupun sign up
      */
     if (user) {
-      onSignInClose();
-      onSignUpClose();
-
       /**
        * kalo user exists update state user
        */
@@ -102,7 +69,7 @@ export default function Home() {
         email: user.email ?? undefined,
       });
     }
-  }, [user, onSignInClose, onSignUpClose, updateAll]);
+  }, [user, updateAll]);
 
   return (
     <Container
@@ -119,10 +86,6 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Navbar />
-
-      {/* modal sign in dan sign up */}
-      <SignInModal isOpen={isSignInOpen} onClose={onSignInClose} />
-      <SignUpModal isOpen={isSignUpOpen} onClose={onSignUpClose} />
 
       {/* drawer try it */}
       <TryItDrawer isOpen={isDrawerOpen} onClose={onDrawerClose} />
