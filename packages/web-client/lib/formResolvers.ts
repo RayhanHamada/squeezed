@@ -1,83 +1,53 @@
-// TODO change yup to zod and resolver to zod resolver
 import { urlRegex } from '@/lib/utils';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 
-export type SignUpSchema = {
-  username: string;
-  email: string;
-  password: string;
-  passwordConfirmation: string;
-};
-
-const signUpSchema = yup.object().shape({
-  username: yup.string().required('Username is required'),
-  email: yup.string().email().required('Email required'),
-  password: yup.string().min(8).required('Password required'),
-  passwordConfirmation: yup
-    .string()
-    .min(8)
-    .required('Password Confirmation required'),
+const signUpSchema = z.object({
+  username: z.string(),
+  email: z.string().email(),
+  password: z.string().min(8),
+  passwordConfirmation: z.string().min(8),
 });
 
-export const signUpResolver = yupResolver(signUpSchema);
+export type SignUpSchema = z.infer<typeof signUpSchema>;
+export const signUpResolver = zodResolver(signUpSchema);
 
-export type SignInSchema = {
-  email: string;
-  password: string;
-};
-
-const signInSchema = yup.object().shape({
-  email: yup.string().email().required('Email required'),
-  password: yup.string().required('Password required'),
+const signInSchema = z.object({
+  email: z.string().email(),
+  password: z.string(),
 });
 
-export const signInResolver = yupResolver(signInSchema);
+export type SignInSchema = z.infer<typeof signInSchema>;
+export const signInResolver = zodResolver(signInSchema);
 
-export type TryItSchema = {
-  refURL: string;
-};
-
-const tryItSchema = yup.object().shape({
-  refURL: yup.string().matches(urlRegex),
+const tryItSchema = z.object({
+  refURL: z.string().regex(urlRegex),
 });
 
-export const tryItResolver = yupResolver(tryItSchema);
+export type TryItSchema = z.infer<typeof tryItSchema>;
+export const tryItResolver = zodResolver(tryItSchema);
 
-export type CreateLinkSchema = {
-  title: string;
-  refURL: string;
-  expireTime?: number;
-  enabled: boolean;
-};
-
-const createLinkSchema = yup.object().shape({
-  title: yup.string().optional().default('No Title'),
-  refURL: yup.string().matches(urlRegex, { message: 'Invalid URL' }).required(),
-  expireTime: yup.number().min(1).optional(),
-  enabled: yup.bool().default(true),
+const createLinkSchema = z.object({
+  title: z.string(),
+  refURL: z.string().regex(urlRegex, { message: `reference URL seems wrong` }),
+  expireTime: z.optional(z.number()),
+  enabled: z.boolean(),
 });
 
-export const createLinkResolver = yupResolver(createLinkSchema);
+export type CreateLinkSchema = z.infer<typeof createLinkSchema>;
+export const createLinkResolver = zodResolver(createLinkSchema);
 
-export type EditLink = {
-  title: string;
-  refURL: string;
-};
-
-const editLinkSchema = yup.object().shape({
-  title: yup.string().optional().default('No Title'),
-  refURL: yup.string().matches(urlRegex, { message: 'Invalid URL' }).required(),
+const editLinkSchema = z.object({
+  title: z.string(),
+  refURL: z.string().regex(urlRegex, { message: `reference URL seems wrong` }),
 });
 
-export const editLinkResolver = yupResolver(editLinkSchema);
+export type EditLink = z.infer<typeof editLinkSchema>;
+export const editLinkResolver = zodResolver(editLinkSchema);
 
-export type UserSettingSchema = {
-  username: string;
-};
-
-const userSettingSchema = yup.object().shape({
-  username: yup.string().min(1).required(),
+const userSettingSchema = z.object({
+  username: z.string(),
 });
 
-export const userSettingResolver = yupResolver(userSettingSchema);
+export type UserSettingSchema = z.infer<typeof userSettingSchema>;
+export const userSettingResolver = zodResolver(userSettingSchema);
