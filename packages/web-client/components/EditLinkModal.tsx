@@ -1,8 +1,9 @@
 import { isDev } from '@/global';
 import { fb } from '@/lib/firebase-client';
+import type { EditLink } from '@/lib/formResolvers';
+import { editLinkResolver as resolver } from '@/lib/formResolvers';
 import { URLData } from '@/lib/model-types';
 import { useEditLinkStore } from '@/lib/store';
-import { urlRegex } from '@/lib/utils';
 import {
   Box,
   Button,
@@ -22,25 +23,13 @@ import {
   Textarea,
   VStack,
 } from '@chakra-ui/react';
-import { yupResolver } from '@hookform/resolvers/yup';
 import React, { createRef, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import * as yup from 'yup';
 
 type Props = {
   isOpen: boolean;
   onClose(): void;
 };
-
-type FormField = {
-  title: string;
-  refURL: string;
-};
-
-const schema = yup.object().shape({
-  title: yup.string().optional().default('No Title'),
-  refURL: yup.string().matches(urlRegex, { message: 'Invalid URL' }).required(),
-});
 
 export const EditLinkModal: React.FC<Props> = ({ isOpen, onClose }) => {
   const firstField = createRef<HTMLInputElement>();
@@ -52,8 +41,7 @@ export const EditLinkModal: React.FC<Props> = ({ isOpen, onClose }) => {
     register,
     formState: { isSubmitting, errors },
     setValue,
-    reset: resetForm,
-  } = useForm<FormField>({ resolver: yupResolver(schema) });
+  } = useForm<EditLink>({ resolver });
 
   useEffect(() => {
     if (currentURLID !== '') {
@@ -136,7 +124,6 @@ export const EditLinkModal: React.FC<Props> = ({ isOpen, onClose }) => {
                     {...register('refURL')}
                   />
                   <Text textColor="red" fontSize="sm">
-                    {/* {isRefURLValid ? '' : 'URL seems to be wrong ;('} */}
                     {errors.refURL?.message}
                   </Text>
                 </Box>

@@ -59,3 +59,15 @@ const createLinkSchema = yup.object().shape({
 });
 
 export const createLinkResolver = yupResolver(createLinkSchema);
+
+export type EditLink = {
+  title: string;
+  refURL: string;
+};
+
+const editLinkSchema = yup.object().shape({
+  title: yup.string().optional().default('No Title'),
+  refURL: yup.string().matches(urlRegex, { message: 'Invalid URL' }).required(),
+});
+
+export const editLinkResolver = yupResolver(editLinkSchema);
