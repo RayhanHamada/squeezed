@@ -1,5 +1,7 @@
 import { PasswordChangeModal } from '@/components/PasswordChangeModal';
 import { fb } from '@/lib/firebase-client';
+import type { UserSettingSchema } from '@/lib/formResolvers';
+import { userSettingResolver as resolver } from '@/lib/formResolvers';
 import { useUserDataStore } from '@/lib/store';
 import {
   Box,
@@ -10,19 +12,9 @@ import {
   Input,
   VStack,
 } from '@chakra-ui/react';
-import { yupResolver } from '@hookform/resolvers/yup';
 import React from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useForm } from 'react-hook-form';
-import * as yup from 'yup';
-
-type FormField = {
-  username: string;
-};
-
-const formSchema = yup.object().shape({
-  username: yup.string().min(1).required(),
-});
 
 export const UserSettingForm = () => {
   const [user, authLoading] = useAuthState(fb.auth());
@@ -31,8 +23,8 @@ export const UserSettingForm = () => {
     handleSubmit,
     formState: { isSubmitting, errors },
     register,
-  } = useForm<FormField>({
-    resolver: yupResolver(formSchema),
+  } = useForm<UserSettingSchema>({
+    resolver,
   });
 
   const { updateUsername } = useUserDataStore();

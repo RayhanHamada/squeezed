@@ -1,7 +1,7 @@
 // TODO change yup to zod and resolver to zod resolver
+import { urlRegex } from '@/lib/utils';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { urlRegex } from './utils';
 
 export type SignUpSchema = {
   username: string;
@@ -71,3 +71,13 @@ const editLinkSchema = yup.object().shape({
 });
 
 export const editLinkResolver = yupResolver(editLinkSchema);
+
+export type UserSettingSchema = {
+  username: string;
+};
+
+const userSettingSchema = yup.object().shape({
+  username: yup.string().min(1).required(),
+});
+
+export const userSettingResolver = yupResolver(userSettingSchema);
