@@ -1,7 +1,7 @@
 import { isDev } from '@/global';
+import { fetchAnonURL } from '@/lib/api';
 import type { TryItSchema } from '@/lib/formResolvers';
 import { tryItResolver as resolver } from '@/lib/formResolvers';
-import { useTryItStore } from '@/lib/store';
 import { urlRegex } from '@/lib/utils';
 import {
   Box,
@@ -48,9 +48,7 @@ export const TryItDrawer: React.FC<Props> = ({ isOpen, onClose }) => {
     handleSubmit,
     watch,
     formState: { isSubmitting },
-  } = useForm<TryItSchema>({ resolver });
-
-  const fetchAnonURL = useTryItStore((sel) => sel.fetchAnonURL);
+  } = useForm<TryItSchema>({ resolver, defaultValues: { refURL: '' } });
 
   const onSubmit = handleSubmit(
     async ({ refURL }) => {
@@ -59,7 +57,7 @@ export const TryItDrawer: React.FC<Props> = ({ isOpen, onClose }) => {
       }
 
       await fetchAnonURL(refURL)
-        .then((v) => v as string)
+        .then((v) => v.data.uuid_code as string)
         .then((code) => {
           setUUIDCode(code);
         })

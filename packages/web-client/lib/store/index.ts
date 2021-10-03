@@ -1,56 +1,8 @@
-import { baseURL, isDev } from '@/global';
-import {
-  GenerateAnonUUIDBody,
-  GenerateAnonUUIDResponse,
-  GenerateAuthenticatedUUIDBody,
-  GenerateAuthenticatedUUIDResponse,
-  UpdateUsernameBody,
-} from '@/lib/api-typings';
+import { isDev } from '@/global';
+import { fetchUUID, signUp, updateUsername } from '@/lib/api';
 import { fb } from '@/lib/firebase-client';
-import { urlRegex } from '@/lib/utils';
-import { ChangeEventHandler } from 'react';
-import axios from 'redaxios';
 import createStore from 'zustand';
 import { combine, devtools, persist } from 'zustand/middleware';
-
-export const useTryItStore = createStore(
-  persist(
-    combine({}, (set) => ({
-      fetchAnonURL: async (refURL: string) => {
-        return await axios
-          .post<GenerateAnonUUIDResponse>(`${baseURL}/api/generateAnonUUID`, {
-            ref_url: refURL,
-          } as GenerateAnonUUIDBody)
-          .then(async (res) => {
-            const { uuid_code: uuidCode } = res.data;
-            return uuidCode;
-          })
-          .catch((err) => {
-            if (isDev) {
-              console.log(err);
-            }
-          });
-      },
-
-      onTextBoxChange: (
-        e: Parameters<ChangeEventHandler<HTMLTextAreaElement>>[0]
-      ) => {
-        const refURL = e.target.value;
-
-        if (!urlRegex.test(refURL)) {
-          set(() => ({ isRefURLValid: false }));
-          return;
-        }
-
-        set(() => ({ isRefURLValid: true, refURL: refURL }));
-      },
-    })),
-    {
-      name: 'try-it-store',
-      getStorage: () => sessionStorage,
-    }
-  )
-);
 
 export const useUserDataStore = createStore(
   persist(
@@ -71,12 +23,7 @@ export const useUserDataStore = createStore(
           })),
 
         updateUsername: async (username: string) => {
-          const uid = get().uid;
-          await axios
-            .post(`${baseURL}/api/updateUsername`, {
-              username,
-              uid,
-            } as UpdateUsernameBody)
+          return updateUsername(username, get().uid)
             .then(() => {
               set(() => ({ username }));
             })
@@ -113,12 +60,7 @@ export const useSignUpStore = createStore(
       goSignUp: async (username: string, email: string, password: string) => {
         set(() => ({ isLoading: true, loadingMsg: 'Please wait...' }));
 
-        await axios
-          .post(`${baseURL}/api/createUser`, {
-            username,
-            email,
-            password,
-          })
+        await signUp(username, email, password)
           .then(() => {
             set(() => ({
               loadingMsg: 'Success creating user',
@@ -196,17 +138,9 @@ export const useCreateLinkStore = createStore(
         ) => {
           const { uid } = useUserDataStore.getState();
 
-          await axios
-            .post(`${baseURL}/api/generateAuthenticatedUUID`, {
-              uid,
-              enabled,
-              ref_url: refURL,
-              title: !title || title === '' ? 'No Title' : title,
-              expire_at: expireAt,
-            } as GenerateAuthenticatedUUIDBody)
+          await fetchUUID(uid, enabled, refURL, title, expireAt)
             .then((res) => {
-              const { uuid_code } =
-                res.data as GenerateAuthenticatedUUIDResponse;
+              const { uuid_code } = res.data;
 
               set(() => ({ generatedCode: uuid_code! }));
             })
