@@ -1,4 +1,8 @@
+import { isDev } from '@/global';
+import type { TryItSchema } from '@/lib/formResolvers';
+import { tryItResolver as resolver } from '@/lib/formResolvers';
 import { useTryItStore } from '@/lib/store';
+import { urlRegex } from '@/lib/utils';
 import {
   Box,
   Button,
@@ -18,7 +22,8 @@ import {
   Textarea,
   useToast,
 } from '@chakra-ui/react';
-import React, { createRef } from 'react';
+import React, { createRef, MouseEventHandler, useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { FaClipboard } from 'react-icons/fa';
 
 type Props = {
@@ -29,6 +34,54 @@ type Props = {
 export const TryItDrawer: React.FC<Props> = ({ isOpen, onClose }) => {
   const firstField = createRef<HTMLInputElement>();
 
+  const [expanded, setIsExpanded] = useState(false);
+  const toggleExpand: MouseEventHandler<HTMLButtonElement> = (e) => {
+    e.preventDefault();
+    setIsExpanded(!expanded);
+  };
+
+  const [uuidCode, setUUIDCode] = useState('');
+  const [isFailedFetching, setIsFailedFetching] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { isSubmitting },
+  } = useForm<TryItSchema>({ resolver });
+
+  const fetchAnonURL = useTryItStore((sel) => sel.fetchAnonURL);
+
+  const onSubmit = handleSubmit(
+    async ({ refURL }) => {
+      if (isDev) {
+        console.log(`${refURL}`);
+      }
+
+      await fetchAnonURL(refURL)
+        .then((v) => v as string)
+        .then((code) => {
+          setUUIDCode(code);
+        })
+        .catch((err) => {
+          if (isDev) {
+            console.log(err);
+          }
+
+          setIsFailedFetching(true);
+
+          setTimeout(() => {
+            setIsFailedFetching(false);
+          }, 1000);
+        });
+    },
+    (errors) => {
+      if (isDev) {
+        console.log(errors);
+      }
+    }
+  );
+
   const toast = useToast({
     description: 'Text Copied',
     title: 'Copied !',
@@ -37,22 +90,14 @@ export const TryItDrawer: React.FC<Props> = ({ isOpen, onClose }) => {
     position: 'bottom',
   });
 
-  const {
-    fetchAnonURL,
-    isError,
-    isFetching,
-    uuidCode,
-    onTextBoxChange,
-    toggleExpanded,
-    refURL,
-    expanded,
-    isRefURLValid,
-  } = useTryItStore();
-
-  const copy = () => {
+  const copy: MouseEventHandler = (e) => {
+    e.preventDefault();
     navigator.clipboard.writeText(`sqzd.xyz/${uuidCode}`);
     toast();
   };
+
+  const isValidRefURL = urlRegex.test(watch('refURL'));
+  const isRefURLEmpty = watch('refURL') === '';
 
   return (
     <Drawer
@@ -70,76 +115,82 @@ export const TryItDrawer: React.FC<Props> = ({ isOpen, onClose }) => {
 
         <DrawerBody maxH="full">
           <Flex flexDir="column" alignItems="stretch" justifyContent="center">
-            <Stack spacing="24px">
-              <Box>
-                <Textarea
-                  placeholder="Paste Your Loooooooooooong link here"
-                  h="32"
-                  onChange={onTextBoxChange}
-                  border="1px"
-                  borderTop="4px"
-                  borderRight="4px"
-                  borderColor="black"
-                />
-                <Text textColor="red" fontSize="sm">
-                  {isRefURLValid ? '' : 'URL seems to be invalid'}
-                </Text>
-              </Box>
-
-              <Flex>
-                <Button
-                  size="xs"
-                  onClick={toggleExpanded}
-                  variant="outline"
-                  borderTop="4px"
-                  borderRight="4px"
-                  borderColor="black"
-                >
-                  {expanded ? 'Too big...' : 'More room please...'}
-                </Button>
-              </Flex>
-              <Button
-                size="md"
-                variant="outline"
-                border="2px"
-                borderColor="black"
-                onClick={fetchAnonURL}
-                borderTop="8px"
-                borderRight="8px"
-                isDisabled={!isRefURLValid || refURL === ''}
-              >
-                Generate !
-              </Button>
-              <Text>Your Shortened URL is: </Text>
-              {isFetching ? (
-                <Center>
-                  <Spinner />
-                </Center>
-              ) : undefined}
-              {isError ? (
-                <Text textColor="red">Failed fetching data for your url</Text>
-              ) : undefined}
-
-              {uuidCode !== '' ? (
-                <Flex justifyContent="space-between">
-                  <Text onClick={copy} textColor="blue">
-                    sqzd.xyz/{uuidCode}
+            <form action="" onSubmit={onSubmit}>
+              <Stack spacing="24px">
+                <Box>
+                  <Textarea
+                    placeholder="Paste Your Loooooooooooong link here"
+                    h="32"
+                    border="1px"
+                    borderTop="4px"
+                    borderRight="4px"
+                    borderColor="black"
+                    {...register('refURL')}
+                  />
+                  <Text textColor="red" fontSize="sm" h="4">
+                    {isRefURLEmpty
+                      ? ' '
+                      : isValidRefURL
+                      ? ' '
+                      : `URL doesn't seems right`}
                   </Text>
-                  <Spacer />
-                  <IconButton
+                </Box>
+
+                <Flex>
+                  <Button
                     size="xs"
-                    aria-label="copy"
-                    icon={<FaClipboard />}
-                    onClick={copy}
-                  ></IconButton>
+                    onClick={toggleExpand}
+                    variant="outline"
+                    borderTop="4px"
+                    borderRight="4px"
+                    borderColor="black"
+                  >
+                    {expanded ? 'Too big...' : 'More room please...'}
+                  </Button>
                 </Flex>
-              ) : undefined}
-              {uuidCode !== '' ? (
-                <Text>
-                  URL only last for the next 24 hour. Sign In to save your URL
-                </Text>
-              ) : undefined}
-            </Stack>
+                <Button
+                  size="md"
+                  variant="outline"
+                  border="2px"
+                  borderColor="black"
+                  type="submit"
+                  borderTop="8px"
+                  borderRight="8px"
+                  isDisabled={isSubmitting || !isValidRefURL || isRefURLEmpty}
+                >
+                  Generate !
+                </Button>
+                <Text>Your Shortened URL is: </Text>
+                {isSubmitting ? (
+                  <Center>
+                    <Spinner />
+                  </Center>
+                ) : undefined}
+                {isFailedFetching ? (
+                  <Text textColor="red">Failed fetching data for your url</Text>
+                ) : undefined}
+
+                {uuidCode !== '' ? (
+                  <Flex justifyContent="space-between">
+                    <Text onClick={copy} textColor="blue">
+                      sqzd.xyz/{uuidCode}
+                    </Text>
+                    <Spacer />
+                    <IconButton
+                      size="xs"
+                      aria-label="copy"
+                      icon={<FaClipboard />}
+                      onClick={copy}
+                    ></IconButton>
+                  </Flex>
+                ) : undefined}
+                {uuidCode !== '' ? (
+                  <Text>
+                    URL only last for the next 24 hour. Sign In to save your URL
+                  </Text>
+                ) : undefined}
+              </Stack>
+            </form>
           </Flex>
         </DrawerBody>
       </DrawerContent>

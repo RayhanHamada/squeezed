@@ -1,5 +1,7 @@
+// TODO change yup to zod and resolver to zod resolver
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+import { urlRegex } from './utils';
 
 export type SignUpSchema = {
   username: string;
@@ -31,3 +33,13 @@ const signInSchema = yup.object().shape({
 });
 
 export const signInResolver = yupResolver(signInSchema);
+
+export type TryItSchema = {
+  refURL: string;
+};
+
+const tryItSchema = yup.object().shape({
+  refURL: yup.string().matches(urlRegex),
+});
+
+export const tryItResolver = yupResolver(tryItSchema);

@@ -8,75 +8,43 @@ import {
 } from '@/lib/api-typings';
 import { fb } from '@/lib/firebase-client';
 import { urlRegex } from '@/lib/utils';
-import { ChangeEventHandler, MouseEventHandler } from 'react';
+import { ChangeEventHandler } from 'react';
 import axios from 'redaxios';
 import createStore from 'zustand';
 import { combine, devtools, persist } from 'zustand/middleware';
 
 export const useTryItStore = createStore(
   persist(
-    combine(
-      {
-        refURL: '',
-        uuidCode: '',
-        isRefURLValid: true,
-        isFetching: false,
-        isError: false,
-        errorMsg: '',
-        expanded: false,
+    combine({}, (set) => ({
+      fetchAnonURL: async (refURL: string) => {
+        return await axios
+          .post<GenerateAnonUUIDResponse>(`${baseURL}/api/generateAnonUUID`, {
+            ref_url: refURL,
+          } as GenerateAnonUUIDBody)
+          .then(async (res) => {
+            const { uuid_code: uuidCode } = res.data;
+            return uuidCode;
+          })
+          .catch((err) => {
+            if (isDev) {
+              console.log(err);
+            }
+          });
       },
-      (set, get) => ({
-        toggleExpanded: (
-          e: Parameters<MouseEventHandler<HTMLButtonElement>>[0]
-        ) => {
-          e.preventDefault();
-          set((state) => ({ expanded: !state.expanded }));
-        },
 
-        fetchAnonURL: async () => {
-          set(() => ({ isFetching: true }));
+      onTextBoxChange: (
+        e: Parameters<ChangeEventHandler<HTMLTextAreaElement>>[0]
+      ) => {
+        const refURL = e.target.value;
 
-          const { refURL } = get();
+        if (!urlRegex.test(refURL)) {
+          set(() => ({ isRefURLValid: false }));
+          return;
+        }
 
-          await axios
-            .post(`${baseURL}/api/generateAnonUUID`, {
-              ref_url: refURL,
-            } as GenerateAnonUUIDBody)
-            .then(async (res) => {
-              set(() => ({ isFetching: false }));
-
-              const { uuid_code } = res.data as GenerateAnonUUIDResponse;
-
-              set(() => ({ uuidCode: uuid_code! }));
-            })
-            .catch((err) => {
-              if (isDev) {
-                console.log(err);
-              }
-              set(() => ({ isFetching: false, isError: true }));
-            });
-
-          if (get().isError) {
-            setTimeout(() => {
-              set(() => ({ isError: false }));
-            }, 1000);
-          }
-        },
-
-        onTextBoxChange: (
-          e: Parameters<ChangeEventHandler<HTMLTextAreaElement>>[0]
-        ) => {
-          const refURL = e.target.value;
-
-          if (!urlRegex.test(refURL)) {
-            set(() => ({ isRefURLValid: false }));
-            return;
-          }
-
-          set(() => ({ isRefURLValid: true, refURL: refURL }));
-        },
-      })
-    ),
+        set(() => ({ isRefURLValid: true, refURL: refURL }));
+      },
+    })),
     {
       name: 'try-it-store',
       getStorage: () => sessionStorage,
