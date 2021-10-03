@@ -1,5 +1,6 @@
+import type { CreateLinkSchema } from '@/lib/formResolvers';
+import { createLinkResolver as resolver } from '@/lib/formResolvers';
 import { useCreateLinkStore } from '@/lib/store';
-import { urlRegex } from '@/lib/utils';
 import {
   Box,
   Button,
@@ -33,30 +34,14 @@ import {
   useToast,
   VStack,
 } from '@chakra-ui/react';
-import { yupResolver } from '@hookform/resolvers/yup';
 import React, { createRef, MouseEvent, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { FaClipboard } from 'react-icons/fa';
-import * as yup from 'yup';
 
 type Props = {
   isOpen: boolean;
   onClose(): void;
 };
-
-type FormField = {
-  title: string;
-  refURL: string;
-  expireTime?: number;
-  enabled: boolean;
-};
-
-const schema = yup.object().shape({
-  title: yup.string().optional().default('No Title'),
-  refURL: yup.string().matches(urlRegex, { message: 'Invalid URL' }).required(),
-  expireTime: yup.number().min(1).optional(),
-  enabled: yup.bool().default(true),
-});
 
 export const CreateLinkDrawer: React.FC<Props> = ({ isOpen, onClose }) => {
   const firstField = createRef<HTMLInputElement>();
@@ -68,10 +53,9 @@ export const CreateLinkDrawer: React.FC<Props> = ({ isOpen, onClose }) => {
     handleSubmit,
     register,
     formState: { errors, isSubmitting },
-    getValues,
     reset: resetFormState,
-  } = useForm<FormField>({
-    resolver: yupResolver(schema),
+  } = useForm<CreateLinkSchema>({
+    resolver: resolver,
     reValidateMode: 'onChange',
   });
 
@@ -174,7 +158,6 @@ export const CreateLinkDrawer: React.FC<Props> = ({ isOpen, onClose }) => {
                       {...register('refURL')}
                     />
                     <Text textColor="red" fontSize="sm">
-                      {/* {isRefURLValid ? '' : 'URL seems to be wrong ;('} */}
                       {errors.refURL?.message}
                     </Text>
                   </Box>

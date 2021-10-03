@@ -43,3 +43,19 @@ const tryItSchema = yup.object().shape({
 });
 
 export const tryItResolver = yupResolver(tryItSchema);
+
+export type CreateLinkSchema = {
+  title: string;
+  refURL: string;
+  expireTime?: number;
+  enabled: boolean;
+};
+
+const createLinkSchema = yup.object().shape({
+  title: yup.string().optional().default('No Title'),
+  refURL: yup.string().matches(urlRegex, { message: 'Invalid URL' }).required(),
+  expireTime: yup.number().min(1).optional(),
+  enabled: yup.bool().default(true),
+});
+
+export const createLinkResolver = yupResolver(createLinkSchema);
