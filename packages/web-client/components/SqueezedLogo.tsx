@@ -1,3 +1,4 @@
+import { useTheme } from '@/lib/store';
 import { Text, TypographyProps } from '@chakra-ui/react';
 import { useRouter } from 'next/dist/client/router';
 import React, { MouseEventHandler } from 'react';
@@ -9,6 +10,8 @@ type Props = {
 export const SqueezedLogo: React.FC<Props> = ({ fontSize }) => {
   const router = useRouter();
 
+  const { isDark } = useTheme();
+
   const refresh: MouseEventHandler = (e) => {
     e.preventDefault();
     router.push('/');
@@ -18,7 +21,7 @@ export const SqueezedLogo: React.FC<Props> = ({ fontSize }) => {
     <Text
       fontSize={fontSize}
       fontWeight="bold"
-      color="white"
+      color={isDark ? 'white' : 'orange'}
       _hover={{ cursor: 'pointer' }}
       onClick={refresh}
     >

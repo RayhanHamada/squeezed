@@ -11,6 +11,7 @@ import { URLData } from '@/lib/model-types';
 import {
   useDeleteStore,
   useEditLinkStore,
+  useTheme,
   useURLDataStore,
   useUserDataStore,
 } from '@/lib/store';
@@ -150,6 +151,8 @@ export default function Dashboard() {
     });
   };
 
+  const { isDark } = useTheme();
+
   if (!(user || isAuthLoading)) {
     return <Redirecting />;
   }
@@ -160,7 +163,7 @@ export default function Dashboard() {
       h={{ base: '120vh', md: '100vh', lg: '100vh' }}
       p="0"
       marginX="0"
-      bgColor="black"
+      bgColor={isDark ? 'black' : 'orange.500'}
     >
       <Navbar />
       <Head>
@@ -344,7 +347,7 @@ export default function Dashboard() {
 
                         <Switch
                           mx="4"
-                          colorScheme="green"
+                          colorScheme={isDark ? 'green' : 'whiteAlpha'}
                           isChecked={enabled}
                           onChange={(e) => {
                             e.preventDefault();
@@ -372,7 +375,7 @@ export default function Dashboard() {
                         <IconButton
                           mx="4"
                           aria-label="delete"
-                          icon={<FaTrash color="red" />}
+                          icon={<FaTrash color={isDark ? 'red' : 'white'} />}
                           bgColor="transparent"
                           _hover={{ bgColor: 'transparent', opacity: 0.7 }}
                           display={{

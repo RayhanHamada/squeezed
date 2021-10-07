@@ -1,4 +1,8 @@
-import { usePasswordChangeStore, useUserDataStore } from '@/lib/store';
+import {
+  usePasswordChangeStore,
+  useTheme,
+  useUserDataStore,
+} from '@/lib/store';
 import {
   Button,
   Modal,
@@ -65,6 +69,8 @@ export const PasswordChangeModal: React.FC<Props> = ({ isDisabled }: Props) => {
     onClose();
   };
 
+  const { isDark } = useTheme();
+
   return (
     <>
       <Button
@@ -79,7 +85,11 @@ export const PasswordChangeModal: React.FC<Props> = ({ isDisabled }: Props) => {
       </Button>
       <Modal isOpen={isOpen} onClose={onCloseAndReset}>
         <ModalOverlay />
-        <ModalContent bgColor="black" border="1px" borderColor="white">
+        <ModalContent
+          bgColor={isDark ? 'black' : 'orange.500'}
+          border="1px"
+          borderColor="white"
+        >
           <ModalCloseButton color="white" border="1px" borderColor="white" />
           <ModalHeader textColor="white">Change Password</ModalHeader>
           <VStack alignItems="center" spacing="4" pb="4">

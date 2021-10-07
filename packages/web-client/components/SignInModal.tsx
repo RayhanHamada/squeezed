@@ -1,6 +1,7 @@
 import { fb } from '@/lib/firebase-client';
 import type { SignInSchema } from '@/lib/formResolvers';
 import { signInResolver as resolver } from '@/lib/formResolvers';
+import { useTheme } from '@/lib/store';
 import {
   Box,
   Button,
@@ -65,11 +66,13 @@ export const SignInModal: React.FC<Props> = ({ isOpen, onClose }) => {
     }
   );
 
+  const { isDark } = useTheme();
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
       <ModalContent
-        bgColor="black"
+        bgColor={isDark ? 'black' : 'orange.500'}
         border="1px"
         borderTop="8px"
         borderRight="8px"
@@ -95,11 +98,11 @@ export const SignInModal: React.FC<Props> = ({ isOpen, onClose }) => {
                 </InputLeftElement>
                 <Input
                   type="email"
+                  _placeholder={{ opacity: 0.6, color: 'white' }}
                   textColor="white"
                   placeholder="example.123@example.com"
                   borderTop="4px"
                   borderRight="4px"
-                  _placeholder={{ opacity: 0.7 }}
                   {...register('email')}
                 />
               </InputGroup>
@@ -122,9 +125,9 @@ export const SignInModal: React.FC<Props> = ({ isOpen, onClose }) => {
                 </InputLeftElement>
                 <Input
                   type={passwordVisible ? 'text' : 'password'}
-                  placeholder="Your Super Secret Password"
-                  _placeholder={{ opacity: 0.6 }}
+                  _placeholder={{ opacity: 0.6, color: 'white' }}
                   textColor="white"
+                  placeholder="Your Super Secret Password"
                   borderTop="4px"
                   borderRight="4px"
                   {...register('password')}

@@ -1,6 +1,6 @@
 import type { CreateLinkSchema } from '@/lib/formResolvers';
 import { createLinkResolver as resolver } from '@/lib/formResolvers';
-import { useCreateLinkStore } from '@/lib/store';
+import { useCreateLinkStore, useTheme } from '@/lib/store';
 import {
   Box,
   Button,
@@ -102,6 +102,8 @@ export const CreateLinkDrawer: React.FC<Props> = ({ isOpen, onClose }) => {
     resetFormState();
   };
 
+  const { isDark } = useTheme();
+
   return (
     <Drawer
       placement="right"
@@ -127,7 +129,7 @@ export const CreateLinkDrawer: React.FC<Props> = ({ isOpen, onClose }) => {
                   variant="outline"
                   borderTop="4px"
                   borderRight="4px"
-                  borderColor="black"
+                  borderColor={isDark ? 'black' : 'orange.500'}
                   w="32"
                 >
                   {isExpanded ? 'Too big...' : 'More room please...'}

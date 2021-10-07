@@ -1,9 +1,10 @@
 import { fb } from '@/lib/firebase-client';
-import { useURLDataStore, useUserDataStore } from '@/lib/store';
+import { useTheme, useURLDataStore, useUserDataStore } from '@/lib/store';
 import {
   Button,
   Center,
   Flex,
+  IconButton,
   Menu,
   MenuButton,
   MenuItem,
@@ -16,7 +17,7 @@ import React, { MouseEventHandler } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { IconType } from 'react-icons';
 import { BiLogOut } from 'react-icons/bi';
-import { FaChevronDown, FaCog } from 'react-icons/fa';
+import { FaChevronDown, FaCog, FaMoon, FaSun } from 'react-icons/fa';
 import { MdDashboard } from 'react-icons/md';
 import { SignInButton } from './SignInButton';
 import { SignUpButton } from './SignUpButton';
@@ -33,6 +34,13 @@ export const Navbar: React.FC = (_props) => {
   const resetUserDataStore = useUserDataStore((sel) => sel.reset);
   const resetURLDataStore = useURLDataStore((sel) => sel.resetURLDataStore);
   const username = useUserDataStore((sel) => sel.username);
+  const { isDark, toggleDarkTheme } = useTheme();
+
+  const toggleDark: MouseEventHandler<HTMLButtonElement> = (e) => {
+    e.preventDefault();
+    e.currentTarget.blur();
+    toggleDarkTheme();
+  };
 
   const router = useRouter();
 
@@ -73,7 +81,7 @@ export const Navbar: React.FC = (_props) => {
   return (
     <Flex
       w="full"
-      bgColor="black"
+      bgColor={isDark ? 'black' : 'white'}
       height="16"
       borderBottom="1px"
       borderColor="white"
@@ -89,23 +97,26 @@ export const Navbar: React.FC = (_props) => {
         {loading ? (
           <Spinner color="white" />
         ) : Boolean(user) ? (
-          <Menu>
+          <Menu closeOnSelect={false}>
             {({ isOpen }) => (
               <>
                 <MenuButton
                   isActive={isOpen}
                   as={Button}
                   rightIcon={<FaChevronDown />}
-                  bgColor="black"
+                  bgColor="white"
                   border="1px"
-                  borderColor="white"
-                  textColor="white"
+                  borderColor={isDark ? 'white' : 'black'}
+                  textColor="black"
                   _hover={{ opacity: 0.7 }}
-                  _active={{ bgColor: 'black' }}
+                  _active={{ bgColor: isDark ? 'white' : 'orange' }}
                 >
                   {username ?? 'John Doe'}
                 </MenuButton>
-                <MenuList bgColor="white" textColor="black">
+                <MenuList
+                  bgColor="white"
+                  textColor={isDark ? 'black' : 'orange'}
+                >
                   {menus.map(({ text, Icon, onClick }, idx) => (
                     <MenuItem key={idx} icon={<Icon />} onClick={onClick}>
                       {text}
@@ -125,6 +136,15 @@ export const Navbar: React.FC = (_props) => {
             </Center>
           </Flex>
         )}
+      </Center>
+      <Center ml="2">
+        <IconButton
+          aria-label="dark-mode"
+          icon={isDark ? <FaMoon color="white" /> : <FaSun color="orange" />}
+          onClick={toggleDark}
+          bg="transparent"
+          _hover={{ bg: 'transparent' }}
+        />
       </Center>
     </Flex>
   );

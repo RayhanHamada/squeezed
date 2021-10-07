@@ -1,4 +1,5 @@
 import { UserSettingForm } from '@/components/UserSettingForm';
+import { useTheme } from '@/lib/store';
 import {
   Box,
   Button,
@@ -18,19 +19,23 @@ export default function Setting() {
     e.preventDefault();
     router.back();
   };
+
+  const { isDark } = useTheme();
+
   return (
     <Container
       maxW="full"
       h={{ base: '120vh', md: '100vh', lg: '100vh' }}
       px="16"
       py="8"
-      //   marginX="0"
-      bgColor="black"
+      bgColor={isDark ? 'black' : 'orange.500'}
     >
       <HStack>
         <Button
           leftIcon={<AiOutlineArrowLeft />}
-          bgColor="black"
+          bgColor="transparent"
+          borderColor="white"
+          borderWidth="thin"
           textColor="white"
           variant="solid"
           _hover={{ opacity: 0.7 }}

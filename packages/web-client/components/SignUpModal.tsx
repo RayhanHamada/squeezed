@@ -1,6 +1,6 @@
 import type { SignUpSchema } from '@/lib/formResolvers';
 import { signUpResolver as resolver } from '@/lib/formResolvers';
-import { useSignUpStore } from '@/lib/store';
+import { useSignUpStore, useTheme } from '@/lib/store';
 import {
   Box,
   Button,
@@ -89,11 +89,13 @@ export const SignUpModal: React.FC<Props> = ({ isOpen, onClose }) => {
     togglePasswordVisible((s) => !s);
   };
 
+  const { isDark } = useTheme();
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
       <ModalContent
-        bgColor="black"
+        bgColor={isDark ? 'black' : 'orange.500'}
         border="1px"
         borderTop="8px"
         borderRight="8px"
@@ -121,7 +123,7 @@ export const SignUpModal: React.FC<Props> = ({ isOpen, onClose }) => {
                   placeholder="myAwesomeUsername"
                   borderTop="4px"
                   borderRight="4px"
-                  _placeholder={{ opacity: 0.7 }}
+                  _placeholder={{ opacity: 0.6, color: 'white' }}
                   {...register('username')}
                 />
               </InputGroup>
@@ -146,7 +148,7 @@ export const SignUpModal: React.FC<Props> = ({ isOpen, onClose }) => {
                   placeholder="example.123@example.com"
                   borderTop="4px"
                   borderRight="4px"
-                  _placeholder={{ opacity: 0.7 }}
+                  _placeholder={{ opacity: 0.6, color: 'white' }}
                   {...register('email')}
                 />
               </InputGroup>
@@ -168,7 +170,7 @@ export const SignUpModal: React.FC<Props> = ({ isOpen, onClose }) => {
                 <Input
                   type={passwordVisible ? 'text' : 'password'}
                   placeholder="Your Super Secret Password"
-                  _placeholder={{ opacity: 0.6 }}
+                  _placeholder={{ opacity: 0.6, color: 'white' }}
                   textColor="white"
                   borderTop="4px"
                   borderRight="4px"
@@ -216,7 +218,7 @@ export const SignUpModal: React.FC<Props> = ({ isOpen, onClose }) => {
                 <Input
                   type={passwordVisible ? 'text' : 'password'}
                   placeholder="Must be the same as above"
-                  _placeholder={{ opacity: 0.6 }}
+                  _placeholder={{ opacity: 0.6, color: 'white' }}
                   textColor="white"
                   borderTop="4px"
                   borderRight="4px"

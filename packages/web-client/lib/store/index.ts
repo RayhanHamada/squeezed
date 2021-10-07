@@ -4,6 +4,18 @@ import { fb } from '@/lib/firebase-client';
 import createStore from 'zustand';
 import { combine, devtools, persist } from 'zustand/middleware';
 
+export const useTheme = createStore(
+  persist(
+    combine({ isDark: true }, (set, get) => ({
+      toggleDarkTheme: () => set(({ isDark }) => ({ isDark: !isDark })),
+    })),
+    {
+      name: 'theme',
+      getStorage: () => localStorage,
+    }
+  )
+);
+
 export const useUserDataStore = createStore(
   persist(
     combine(

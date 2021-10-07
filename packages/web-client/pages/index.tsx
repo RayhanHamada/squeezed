@@ -1,7 +1,7 @@
 import { Navbar } from '@/components/Navbar';
 import { TryItDrawer } from '@/components/TryItDrawer';
 import { fb } from '@/lib/firebase-client';
-import { useUserDataStore } from '@/lib/store';
+import { useTheme, useUserDataStore } from '@/lib/store';
 import {
   Button,
   Center,
@@ -55,6 +55,8 @@ export default function Home() {
   const [user, loading] = useAuthState(fb.auth());
   const { updateAll } = useUserDataStore();
 
+  const { isDark } = useTheme();
+
   useEffect(() => {
     /**
      * tutup modal sign in ataupun sign up
@@ -78,7 +80,7 @@ export default function Home() {
       p="0"
       // px="4"
       marginX="0"
-      bgColor="black"
+      bgColor={isDark ? 'black' : 'orange.500'}
     >
       <Head>
         <title>Squeezed</title>
